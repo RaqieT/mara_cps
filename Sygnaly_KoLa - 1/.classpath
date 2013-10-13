@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="lib/appFramework-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jnlp.jar"/>
+	<classpathentry kind="lib" path="lib/looks-2.1.4.jar"/>
+	<classpathentry kind="lib" path="D:/DevilsNest/studia/2012-2013/przedmioty/Cyfrowe przetwarzanie sygnału/laboratoria/workbrench/Sygnaly_KoLa/lib/xstream-1.2.2.jar"/>
+	<classpathentry kind="lib" path="D:/DevilsNest/studia/2012-2013/przedmioty/Cyfrowe przetwarzanie sygnału/laboratoria/workbrench/addings/jcommon-1.0.18/jcommon-1.0.18/jcommon-1.0.18.jar"/>
+	<classpathentry kind="lib" path="D:/DevilsNest/studia/2012-2013/przedmioty/Cyfrowe przetwarzanie sygnału/laboratoria/workbrench/addings/jfreechart-1.0.14/jfreechart-1.0.14/jfreechart-1.0.14-demo.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/guava-r07.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

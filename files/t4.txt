@@ -1,0 +1,10 @@
+<Sygnał>
+  <typSygnału>3</typSygnału>
+  <rodzaj>CIAGLY</rodzaj>
+  <amplituda>1.0</amplituda>
+  <czasPoczątkowy>0.0</czasPoczątkowy>
+  <czasTrwania>3.0</czasTrwania>
+  <okresPodstawowy>1.0</okresPodstawowy>
+  <współczynnikWypełnienia>0.5</współczynnikWypełnienia>
+  <skok>10.0</skok>
+</Sygnał>
