@@ -665,7 +665,7 @@ public class Sygnal {
 	}
 
 	/**
-	 * Skok jednostkowy
+	 * Skok jednostkowy - ciągły
 	 * 
 	 * @param t
 	 *            : double

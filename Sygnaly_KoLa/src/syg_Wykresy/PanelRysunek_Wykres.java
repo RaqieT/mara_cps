@@ -83,14 +83,16 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 						this.sygnalWyswietlany.setPunktyY_wykres(punkt);
 						series.add(ta, punkt);
 						if (this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.CIAGLY) {
-							if (this.sygnalWyswietlany.gettyp() != 9
-									&& this.sygnalWyswietlany.gettyp() != 10)
+							if (/*this.sygnalWyswietlany.gettyp() != 9
+									&& */this.sygnalWyswietlany.gettyp() != 10
+									&& this.sygnalWyswietlany.gettyp() != 11)
 								ta = ta + this.sygnalWyswietlany.getkroczek();
 							else
 								ta = ta + this.sygnalWyswietlany.getkroczek() * 10;
 						} else {
-							if (this.sygnalWyswietlany.gettyp() != 9
-									&& this.sygnalWyswietlany.gettyp() != 10)
+							if (/*this.sygnalWyswietlany.gettyp() != 9
+									&& */this.sygnalWyswietlany.gettyp() != 10
+									&& this.sygnalWyswietlany.gettyp() != 11)
 								ta = ta + this.sygnalWyswietlany.getkrok();
 							else
 								ta = ta + this.sygnalWyswietlany.getkrok() * 10;
@@ -109,7 +111,7 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 				XYSeriesCollection dataset = new XYSeriesCollection(series);
 				JFreeChart chart;
 
-				if ((this.sygnalWyswietlany.gettyp() != 9 && this.sygnalWyswietlany.gettyp() != 10)
+				if ((this.sygnalWyswietlany.gettyp() != 11 && this.sygnalWyswietlany.gettyp() != 10)
 						&& (this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.CIAGLY)) {
 					chart = ChartFactory.createXYLineChart(null, null, null, dataset,
 							PlotOrientation.VERTICAL, true, true, true);
