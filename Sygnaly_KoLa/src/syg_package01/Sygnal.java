@@ -428,8 +428,12 @@ public class Sygnal {
 	}
 
 	public double getkroczek() {
+		if (this.gettyp() == 10)
+		{
+			this.kroczek = (this.gett1() + this.getskok()) /50.0;
+		}else
 		if (this.getrodzaj() == rodzaj_sygnalu.CIAGLY)
-			this.kroczek = (this.gett1() + this.getd()) / 1000;
+			this.kroczek = (this.gett1() + this.getd()) / 1000.0;
 		return this.kroczek;
 	}
 
@@ -681,9 +685,15 @@ public class Sygnal {
 			return 0;
 	}
 
+	/**
+	 * Impuls jednostkowy
+	 * @param t
+	 * @return
+	 */
 	public double sygnalS10(double t) {
 
-		if (t == this.skok) {
+		//przybliżenie związane z nietokładnym trafieniem próbki w skok
+		if (t >= this.skok-this.skok*0.001 && t < this.skok+this.skok*0.001) {
 			return this.getA();
 		} else {
 			return 0;

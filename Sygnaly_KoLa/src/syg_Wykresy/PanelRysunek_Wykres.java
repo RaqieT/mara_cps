@@ -88,7 +88,7 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 									&& this.sygnalWyswietlany.gettyp() != 11)
 								ta = ta + this.sygnalWyswietlany.getkroczek();
 							else
-								ta = ta + this.sygnalWyswietlany.getkroczek() * 10;
+								ta = ta + this.sygnalWyswietlany.getkroczek();
 						} else {
 							if (/*this.sygnalWyswietlany.gettyp() != 9
 									&& */this.sygnalWyswietlany.gettyp() != 10
