@@ -636,23 +636,12 @@ public class Sygnal {
 	 * @return
 	 */
 	public double sygnalS7(double t) {
-		int k;
+		double k = Math.floor((t - this.gett1()) / this.getT());
 
-		for (k = -100; k < 100; k++) {
-			if (t >= k * this.getT() - this.gett1()
-					&& t < this.getKw() * this.getT() + k * this.getT() - this.gett1()) {
-				return this.getA();
-
-			} else if (t >= this.getKw() * this.getT() - this.gett1() + k * this.getT()
-					&& t < this.getT() + k * this.getT() - this.gett1()) {
-				return -this.getA();
-			} else {
-
-				continue;
-			}
-		}
-		return 0;
-
+		if (t >= k*this.getT()+this.gett1() && t < this.getKw()*this.getT()+k*this.getT()+this.gett1())
+			return this.getA();
+		else
+			return -this.getA();
 	}
 
 	public double sygnalS8(double t) {
