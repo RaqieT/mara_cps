@@ -644,25 +644,24 @@ public class Sygnal {
 			return -this.getA();
 	}
 
+	/**
+	 * Sygnał trójkątny
+	 * @param t
+	 * @return
+	 */
 	public double sygnalS8(double t) {
-		int k;
-		for (k = -100; k < 100; k++) {
-			if (t >= k * this.getT() - this.gett1()
+		double k = Math.floor((t - this.gett1()) / this.getT());
+
+			if (t >= k * this.getT() + this.gett1()
 					&& t < this.getKw() * this.getT() + k * this.getT() - this.gett1()) {
 				return (this.getA() / (this.getKw() * this.getT()))
 						* (t - k * this.getT() - this.gett1());
 
-			} else if (t >= this.getKw() * this.getT() + this.gett1() - k * this.getT()
-					&& t < this.getT() + k * this.getT() - this.gett1()) {
+			} else {
 				return (-this.getA()) / (this.getT() * (1 - this.getKw()))
 						* (t - k * this.getT() - this.gett1()) + this.getA() / (1 - this.getKw());
 
-			} else {
-
-				continue;
 			}
-		}
-		return 0;
 	}
 
 	/**
