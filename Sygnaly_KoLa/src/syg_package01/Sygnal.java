@@ -604,8 +604,13 @@ public class Sygnal {
 		return 0.5 * this.getA() * (sin2piTtminT1(t) + Math.abs(sin2piTtminT1(t)));
 	}
 
+	/**
+	 * Sygnał sinusoidalny wyprostowany dwupołówkowo
+	 * @param t
+	 * @return
+	 */
 	public double sygnalS5(double t) {
-		return this.getA() * Math.abs(sin2piTtminT1(t - this.gett1()));
+		return this.getA() * Math.abs(sin2piTtminT1(t));
 	}
 
 	/**
