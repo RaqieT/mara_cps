@@ -624,13 +624,10 @@ public class Sygnal {
 
 		double k = Math.floor((t - this.gett1()) / this.getT());
 
-		// kw ustawione na sztywno
-		if (k > (t - 0.5 * this.getT()) / this.getT()) {
+		if (t >= k*this.getT()+this.gett1() && t < this.getKw()*this.getT()+k*this.getT()+this.gett1())
 			return this.getA();
-		} else {
+		else
 			return 0;
-		}
-
 	}
 
 	/**
