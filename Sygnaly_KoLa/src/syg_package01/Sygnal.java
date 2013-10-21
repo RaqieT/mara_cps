@@ -381,7 +381,7 @@ public class Sygnal {
 	}
 
 	public double sin2piTtminT1(double _t) {
-		return Math.sin(((2 * Math.PI) / this.getT()) * (_t - this.gett1()));
+		return Math.sin(((2.0 * Math.PI) / (double)this.getT()) * (double)(_t - this.gett1()));
 	}
 
 	public double getkrok() {
@@ -595,10 +595,13 @@ public class Sygnal {
 
 	}
 
+	/**
+	 * Sygnał sinusoidalny wyprostowany jednopołówkowo
+	 * @param t
+	 * @return
+	 */
 	public double sygnalS4(double t) {
-		return (1.0 / 2.0)
-				* ((this.getA() * sin2piTtminT1(t - this.gett1())) + Math.abs(sin2piTtminT1(t
-						- this.gett1())));
+		return 0.5 * this.getA() * (sin2piTtminT1(t) + Math.abs(sin2piTtminT1(t)));
 	}
 
 	public double sygnalS5(double t) {
@@ -625,6 +628,11 @@ public class Sygnal {
 
 	}
 
+	/**
+	 * Sygnał prostokątny symetryczny
+	 * @param t
+	 * @return
+	 */
 	public double sygnalS7(double t) {
 		int k;
 
@@ -702,6 +710,19 @@ public class Sygnal {
 		} else {
 			return 0;
 		}
+
+	}
+	
+	/**
+	 * Sygnał dla zadania 4: S2
+	 * S(t)=2*sin(2PI/2*t)+sin(2PI/1*t)+5sin(2PI/0,5*t) f_pr=16
+	 * @param t
+	 * @return
+	 */
+	public double sygnalS12(double t) {
+
+		double PI2t = 2*Math.PI*t;
+		return 2*Math.sin(PI2t*0.5*t)+Math.sin(PI2t*t)+5*Math.sin(PI2t*2*t);
 
 	}
 
