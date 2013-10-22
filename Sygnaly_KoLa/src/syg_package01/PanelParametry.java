@@ -408,7 +408,7 @@ public class PanelParametry extends PanelObslugi {
 			txt_WspolczynnikWypenienia.setEditable(false);
 			nrTxt++;
 
-			lbl_Skok = ustawLabel(lbl_Skok, "skok", nrTxt);
+			lbl_Skok = ustawLabel(lbl_Skok, "skok/prawdop.[%]", nrTxt);
 			txt_Skok = ustawTextField(txt_Skok, "", nrTxt);
 			txt_Skok.setEditable(false);
 			nrTxt++;

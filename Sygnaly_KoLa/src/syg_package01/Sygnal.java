@@ -431,6 +431,9 @@ public class Sygnal {
 		if (this.gettyp() == 10)
 		{
 			this.kroczek = (this.gett1() + this.getskok()) /50.0;
+		}else if (this.gettyp() == 11)
+		{
+			this.kroczek = (this.gett1() + this.getd()) /100.0;
 		}else
 		if (this.getrodzaj() == rodzaj_sygnalu.CIAGLY)
 			this.kroczek = (this.gett1() + this.getd()) / 1000.0;
@@ -701,11 +704,16 @@ public class Sygnal {
 
 	}
 
+	/**
+	 * Szum impulsowy
+	 * @param t
+	 * @return
+	 */
 	public double sygnalS11(double t) {
 
 		if (this.skok == 0) {
 			return 0;
-		} else if (random.nextInt(100) < this.skok) {
+		} else if (random.nextInt(100) <= this.skok) {
 			return this.getA();
 		} else {
 			return 0;
