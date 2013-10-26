@@ -70,7 +70,8 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 			if (this.wykres) {
 
 				XYSeries series = new XYSeries("Sygnał "
-						+ (this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.CIAGLY ? "ciągły"
+						+ ((this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.CIAGLY
+								&& this.sygnalWyswietlany.gettyp() < 10) ? "ciągły"
 								: "dyskretny"));
 				double punkt;
 				double ta = this.sygnalWyswietlany.gett1();

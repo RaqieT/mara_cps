@@ -355,7 +355,7 @@ public class PanelParametry extends PanelObslugi {
 					"sygnał sinusoidalny wyprostowany jednopołówkowo",
 					"sygnał sinusoidalny wyprostowany dwupołówkowo", "sygnał prostokątny",
 					"sygnał prostokątny symetryczny", "sygnał trójkątny", "skok jednostkowy",
-					"impuls jednostkowy", "szum impulsowy" };
+					"impuls jednostkowy", "szum impulsowy"/*, "sygnał S2 z zad4"*/ };
 
 			labels123 = new String[] { "podstawowy", "drugi", "wynikowy" };
 

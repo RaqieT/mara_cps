@@ -361,9 +361,25 @@ public class Sygnal {
 		return wariancja / this.getPunktyY_wykres().size();
 	}
 
-	public boolean porownajSygnal(Sygnal _sygnalPorownywany) {
-		return (this.t1 == _sygnalPorownywany.gett1() && this.getkrok() == _sygnalPorownywany
-				.getkrok());
+	/**
+	 * Dla sygnału dyskretnego: sprawdzenie czasów początkowych i kroków.
+	 * Dla innych rodzajów sygnałów: sprawdzenie czy ten sam rodzaj.
+	 * @param _sygnalPorownywany
+	 * @param _sprawdzanyRodzaj /rodzaj_sygnalu/
+	 * @return
+	 */
+	public boolean porownajSygnal(Sygnal _sygnalPorownywany, rodzaj_sygnalu _sprawdzanyRodzaj) {
+		if (_sprawdzanyRodzaj == rodzaj_sygnalu.DYSKRETNY)
+		{
+			return (_sygnalPorownywany.getrodzaj() == _sprawdzanyRodzaj
+					&& this.rodzaj == _sprawdzanyRodzaj
+					&& (this.t1 == _sygnalPorownywany.gett1() && this.getkrok() == _sygnalPorownywany
+				.getkrok()));
+		}else
+		{
+			return (_sygnalPorownywany.getrodzaj() == _sprawdzanyRodzaj
+					&& this.rodzaj == _sprawdzanyRodzaj);
+		}
 	}
 
 	public void pobierzParametryUzytkownika(int _typ, double _A, double _t1, double _ts, double _d,
@@ -427,16 +443,20 @@ public class Sygnal {
 		this.kroczek = _kroczek;
 	}
 
+	/**
+	 * Zwraca różnice między argumentami (dla sygnałów ciągłych: 1000 próbek; dla dyskretnych: ok. 100)
+	 * @return
+	 */
 	public double getkroczek() {
 		if (this.gettyp() == 10)
 		{
-			this.kroczek = (this.gett1() + this.getskok()) /50.0;
+			this.kroczek = (this.getskok() - this.gett1()) /(Math.floor(100.0*(this.getskok() - this.gett1())/this.getd())*1.0);
 		}else if (this.gettyp() == 11)
 		{
-			this.kroczek = (this.gett1() + this.getd()) /100.0;
+			this.kroczek = (this.getd() - this.gett1()) /100.0;
 		}else
 		if (this.getrodzaj() == rodzaj_sygnalu.CIAGLY)
-			this.kroczek = (this.gett1() + this.getd()) / 1000.0;
+			this.kroczek = (this.getd() - this.gett1()) / 1000.0;
 		return this.kroczek;
 	}
 
@@ -507,61 +527,63 @@ public class Sygnal {
 	/**
 	 * Generowanie sygnałów w zależności od typu.
 	 * 
-	 * @param punkt
+	 * @param _wartosc
 	 *            : double - wartość
-	 * @param punkt2
+	 * @param _argument
 	 *            : double - argument
 	 * @return : double
 	 */
-	public double wykres_punkty(double punkt, double punkt2) {
-		int a = this.gettyp();
-		switch (a) {
+	public double wykres_punkty(double _wartosc, double _argument) {
+		int biezacyTyp = this.gettyp();
+		switch (biezacyTyp) {
 		case 1:
-			punkt = this.sygnalS1();
+			_wartosc = this.sygnalS1();
 			break;
 
 		case 2:
-			punkt = this.sygnalS2();
+			_wartosc = this.sygnalS2();
 			break;
 
 		case 3:
-			punkt = this.sygnalS3(punkt2);
+			_wartosc = this.sygnalS3(_argument);
 			break;
 
 		case 4:
-			punkt = this.sygnalS4(punkt2);
+			_wartosc = this.sygnalS4(_argument);
 			break;
 
 		case 5:
-			punkt = this.sygnalS5(punkt2);
+			_wartosc = this.sygnalS5(_argument);
 			break;
 
 		case 6:
-			punkt = this.sygnalS6(punkt2);
+			_wartosc = this.sygnalS6(_argument);
 			break;
 
 		case 7:
-			punkt = this.sygnalS7(punkt2);
+			_wartosc = this.sygnalS7(_argument);
 			break;
 
 		case 8:
-			punkt = this.sygnalS8(punkt2);
+			_wartosc = this.sygnalS8(_argument);
 			break;
 
 		case 9:
-			punkt = this.sygnalS9(punkt2);
+			_wartosc = this.sygnalS9(_argument);
 			break;
 
 		case 10:
-			punkt = this.sygnalS10(punkt2);
+			_wartosc = this.sygnalS10(_argument);
 			break;
 
 		case 11:
-			punkt = this.sygnalS11(punkt2);
+			_wartosc = this.sygnalS11(_argument);
 			break;
-
+		case 12:
+			_wartosc = this.sygnalS12(_argument);
+			break;
 		}
-		return punkt;
+		return _wartosc;
 
 	}
 

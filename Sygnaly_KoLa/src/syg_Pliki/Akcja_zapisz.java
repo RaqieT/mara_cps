@@ -163,7 +163,7 @@ public class Akcja_zapisz {
 				JOptionPane
 						.showMessageDialog(
 								null,
-								"Plik do zapisu nie został znaleziony.\nZgłoś bład twórcy programu robiąc zdjęcie tego okienka lub kopiując poniższą treść:\n"
+								"Plik do zapisu nie został znaleziony.\n"
 										+ _err.getMessage(), "Błąd zapisu pliku - brak pliku",
 								JOptionPane.ERROR_MESSAGE);
 			} catch (IOException _err) {
@@ -171,7 +171,7 @@ public class Akcja_zapisz {
 				JOptionPane
 						.showMessageDialog(
 								null,
-								"Próba zapisu do pliku nie powiodła się.\nZgłoś bład twórcy programu robiąc zdjęcie tego okienka lub kopiując poniższą treść:\n"
+								"Próba zapisu do pliku nie powiodła się.\n"
 										+ _err.getMessage(),
 								"Błąd zapisu pliku - problem ze strumieniem zapisu",
 								JOptionPane.ERROR_MESSAGE);

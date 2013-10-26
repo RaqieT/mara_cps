@@ -465,20 +465,19 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 	}
 
 	/**
-	 * Sprawdzanie czy można wykonać operacje na dwóch sygnałach
+	 * Sprawdzanie czy można wykonać operacje na dwóch sygnałach (tylko dyskretne)
 	 * 
 	 * @param _sygnalA
 	 *            : Sygnal
 	 * @param _sygnalB
 	 *            : Sygnal
 	 * @return : String <br>
-	 *         "ok" lub: "Sygnały nie mogą być dodane."
+	 *         "ok" lub: "Sygnały nie mogą być dodane.[...]"
 	 */
 	private String sprawdzPoprawnoscOperacji(Sygnal _sygnalA, Sygnal _sygnalB) {
 		// TODO Auto-generated method stub
 		String msg = "";
-		if (_sygnalA.porownajSygnal(_sygnalB) && _sygnalA.getrodzaj() == rodzaj_sygnalu.DYSKRETNY
-				&& _sygnalB.getrodzaj() == rodzaj_sygnalu.DYSKRETNY) {
+		if (_sygnalA.porownajSygnal(_sygnalB, rodzaj_sygnalu.DYSKRETNY)) {
 			msg = "ok";
 		} else {
 			if (_sygnalA.getrodzaj() == rodzaj_sygnalu.CIAGLY
@@ -489,197 +488,142 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 		}
 		return msg;
 	}
+	
+	/**
+	 * Wykonanie wybranej operacji (tylko na sygnałach dyskretnych).
+	 * @param _znakOperacji +, -, *, /
+	 */
+	private void syg_WykonajOperacje (char _znakOperacji)
+	{
+		// pobranie drugiego sygnału z pliku
+		Akcja_otworz otwarcie = null;
+		switch (_znakOperacji) {
+		case '+':
+			otwarcie = new Akcja_otworz(this.listaSygnalow[1],
+					syg_MenuGlowne_Operacje_Dodaj);
+			break;
+		case '-':
+			otwarcie = new Akcja_otworz(this.listaSygnalow[1],
+					syg_MenuGlowne_Operacje_Odejmij);
+			break;
+		case '*':
+			otwarcie = new Akcja_otworz(this.listaSygnalow[1],
+					syg_MenuGlowne_Operacje_Pomnoz);
+			break;
+		case '/':
+			otwarcie = new Akcja_otworz(this.listaSygnalow[1],
+					syg_MenuGlowne_Operacje_Podziel);
+			break;
+		}
+		
+		listaSygnalow[1] = otwarcie.getSygnal();
+		String msgPoprawnosc = this.sprawdzPoprawnoscOperacji(listaSygnalow[0], listaSygnalow[1]);
+
+		if (msgPoprawnosc == "ok") {
+			int iloscProbek = 0;
+			// pobranie mniejszej ilości próbek
+			if (listaSygnalow[1].getPunktyY_wykres().size() > listaSygnalow[0].getPunktyY_wykres()
+					.size())
+				iloscProbek = listaSygnalow[0].getPunktyY_wykres().size();
+			else
+				iloscProbek = listaSygnalow[1].getPunktyY_wykres().size();
+
+			if (listaSygnalow[2].getPunktyY_wykres() != null)
+				listaSygnalow[2].wyczyscPunkty(true);
+
+			// wpisanie wartości parametrów do nowego sygnału
+			listaSygnalow[2].setRodzaj(rodzaj_sygnalu.DYSKRETNY);
+			double amp = 0.0;
+			switch (_znakOperacji) {
+			case '+':
+				amp = listaSygnalow[0].getA() + listaSygnalow[1].getA();
+				break;
+			case '-':
+				amp = listaSygnalow[0].getA() - listaSygnalow[1].getA();
+				break;
+			case '*':
+				amp = listaSygnalow[0].getA() * listaSygnalow[1].getA();
+				break;
+			case '/':
+				amp = listaSygnalow[0].getA() / (listaSygnalow[1].getA() != 0.0 ? listaSygnalow[1].getA() : 0.0000001);
+				break;
+			}
+			listaSygnalow[2].pobierzParametryUzytkownika(listaSygnalow[0].gettyp(),
+					(amp), listaSygnalow[0].gett1(),
+					listaSygnalow[0].getts(), listaSygnalow[0].getd(), // d
+					listaSygnalow[0].getT(), listaSygnalow[0].getKw(), listaSygnalow[0].getskok());
+			listaSygnalow[2].setkrok(listaSygnalow[0].getkrok());
+
+			// operacja
+			switch(_znakOperacji)
+			{
+				case '+':
+				{
+					for (int i = 0; i < iloscProbek; i++) {
+						listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
+								+ listaSygnalow[1].getPunktzindexu(i));
+					}
+					break;
+				}
+				case '-':
+				{
+					for (int i = 0; i < iloscProbek; i++) {
+						listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
+								- listaSygnalow[1].getPunktzindexu(i));
+					}
+					break;
+				}
+				case '*':
+				{
+					for (int i = 0; i < iloscProbek; i++) {
+						listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
+								* listaSygnalow[1].getPunktzindexu(i));
+					}
+					break;
+				}
+				case '/':
+				{
+					for (int i = 0; i < iloscProbek; i++) {
+						listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
+								/ listaSygnalow[1].getPunktzindexu(i));
+					}
+					break;
+				}
+			}
+			
+			// zablokowanie nieedytowalnych wartości i odblokowanie innych
+			syg_panelParametry.cb_wybor123.setEnabled(true);
+			this.syg_MenuGlowne_Operacje.setEnabled(false);
+			syg_panelParametry.zablokujPola(true);
+
+		}
+		if (msgPoprawnosc != "ok") {
+			JOptionPane.showMessageDialog(null, msgPoprawnosc, "Błąd próby operacji na sygnałach",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
 	/**
 	 * Dodawanie sygnałów pobieranych z pliku.
 	 */
 	@Action
 	public void syg_AkcjaOp_Dodaj() {
-		// pobranie drugiego sygnału z pliku
-		Akcja_otworz otwarcie = new Akcja_otworz(this.listaSygnalow[1],
-				syg_MenuGlowne_Operacje_Dodaj);
-		listaSygnalow[1] = otwarcie.getSygnal();
-		String msgPoprawnosc = this.sprawdzPoprawnoscOperacji(listaSygnalow[0], listaSygnalow[1]);
-
-		if (msgPoprawnosc == "ok") {
-			int iloscProbek = 0;
-			// pobranie mniejszej ilości próbek
-			if (listaSygnalow[1].getPunktyY_wykres().size() > listaSygnalow[0].getPunktyY_wykres()
-					.size())
-				iloscProbek = listaSygnalow[0].getPunktyY_wykres().size();
-			else
-				iloscProbek = listaSygnalow[1].getPunktyY_wykres().size();
-
-			if (listaSygnalow[2].getPunktyY_wykres() != null)
-				listaSygnalow[2].wyczyscPunkty(true);
-
-			// wpisanie wartości parametrów do nowego sygnału
-			listaSygnalow[2].setRodzaj(rodzaj_sygnalu.DYSKRETNY);
-			listaSygnalow[2].pobierzParametryUzytkownika(listaSygnalow[0].gettyp(),
-					(listaSygnalow[0].getA() + listaSygnalow[1].getA()), listaSygnalow[0].gett1(),
-					listaSygnalow[0].getts(), listaSygnalow[0].getd(), // d
-					listaSygnalow[0].getT(), listaSygnalow[0].getKw(), listaSygnalow[0].getskok());
-			listaSygnalow[2].setkrok(listaSygnalow[0].getkrok());
-
-			// operacja
-			for (int i = 0; i < iloscProbek; i++) {
-				listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
-						+ listaSygnalow[1].getPunktzindexu(i));
-			}
-
-			// zablokowanie nieedytowalnych wartości i odblokowanie innych
-			syg_panelParametry.cb_wybor123.setEnabled(true);
-			this.syg_MenuGlowne_Operacje.setEnabled(false);
-			syg_panelParametry.zablokujPola(true);
-
-		}
-		if (msgPoprawnosc != "ok") {
-			JOptionPane.showMessageDialog(null, msgPoprawnosc, "Błąd próby operacji na sygnałach",
-					JOptionPane.ERROR_MESSAGE);
-		}
-
+		this.syg_WykonajOperacje('+');
 	}
 
 	@Action
 	public void syg_AkcjaOp_Odejmij() {
-		// pobranie drugiego sygnału z pliku
-		Akcja_otworz otwarcie = new Akcja_otworz(this.listaSygnalow[1],
-				syg_MenuGlowne_Operacje_Dodaj);
-		listaSygnalow[1] = otwarcie.getSygnal();
-		String msgPoprawnosc = this.sprawdzPoprawnoscOperacji(listaSygnalow[0], listaSygnalow[1]);
-
-		if (msgPoprawnosc == "ok") {
-			int iloscProbek = 0;
-			// pobranie mniejszej ilości próbek
-			if (listaSygnalow[1].getPunktyY_wykres().size() > listaSygnalow[0].getPunktyY_wykres()
-					.size())
-				iloscProbek = listaSygnalow[0].getPunktyY_wykres().size();
-			else
-				iloscProbek = listaSygnalow[1].getPunktyY_wykres().size();
-
-			if (listaSygnalow[2].getPunktyY_wykres() != null)
-				listaSygnalow[2].wyczyscPunkty(true);
-
-			// wpisanie wartości parametrów do nowego sygnału
-			listaSygnalow[2].setRodzaj(rodzaj_sygnalu.DYSKRETNY);
-			listaSygnalow[2].pobierzParametryUzytkownika(listaSygnalow[0].gettyp(),
-					(listaSygnalow[0].getA() - listaSygnalow[1].getA()), listaSygnalow[0].gett1(),
-					listaSygnalow[0].getts(), listaSygnalow[0].getd(), // d
-					listaSygnalow[0].getT(), listaSygnalow[0].getKw(), listaSygnalow[0].getskok());
-			listaSygnalow[2].setkrok(listaSygnalow[0].getkrok());
-
-			// operacja
-			for (int i = 0; i < iloscProbek; i++) {
-				listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
-						- listaSygnalow[1].getPunktzindexu(i));
-			}
-
-			// zablokowanie nieedytowalnych wartości i odblokowanie innych
-			syg_panelParametry.cb_wybor123.setEnabled(true);
-			this.syg_MenuGlowne_Operacje.setEnabled(false);
-			syg_panelParametry.zablokujPola(true);
-
-		}
-		if (msgPoprawnosc != "ok") {
-			JOptionPane.showMessageDialog(null, msgPoprawnosc, "Błąd próby operacji na sygnałach",
-					JOptionPane.ERROR_MESSAGE);
-		}
-
+		this.syg_WykonajOperacje('-');
 	}
 
 	@Action
 	public void syg_AkcjaOp_Pomnoz() {
-		// pobranie drugiego sygnału z pliku
-		Akcja_otworz otwarcie = new Akcja_otworz(this.listaSygnalow[1],
-				syg_MenuGlowne_Operacje_Dodaj);
-		listaSygnalow[1] = otwarcie.getSygnal();
-		String msgPoprawnosc = this.sprawdzPoprawnoscOperacji(listaSygnalow[0], listaSygnalow[1]);
-
-		if (msgPoprawnosc == "ok") {
-			int iloscProbek = 0;
-			// pobranie mniejszej ilości próbek
-			if (listaSygnalow[1].getPunktyY_wykres().size() > listaSygnalow[0].getPunktyY_wykres()
-					.size())
-				iloscProbek = listaSygnalow[0].getPunktyY_wykres().size();
-			else
-				iloscProbek = listaSygnalow[1].getPunktyY_wykres().size();
-
-			if (listaSygnalow[2].getPunktyY_wykres() != null)
-				listaSygnalow[2].wyczyscPunkty(true);
-
-			// wpisanie wartości parametrów do nowego sygnału
-			listaSygnalow[2].setRodzaj(rodzaj_sygnalu.DYSKRETNY);
-			listaSygnalow[2].pobierzParametryUzytkownika(listaSygnalow[0].gettyp(),
-					(listaSygnalow[0].getA() * listaSygnalow[1].getA()), listaSygnalow[0].gett1(),
-					listaSygnalow[0].getts(), listaSygnalow[0].getd(), // d
-					listaSygnalow[0].getT(), listaSygnalow[0].getKw(), listaSygnalow[0].getskok());
-			listaSygnalow[2].setkrok(listaSygnalow[0].getkrok());
-
-			// operacja
-			for (int i = 0; i < iloscProbek; i++) {
-				listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
-						* listaSygnalow[1].getPunktzindexu(i));
-			}
-
-			// zablokowanie nieedytowalnych wartości i odblokowanie innych
-			syg_panelParametry.cb_wybor123.setEnabled(true);
-			this.syg_MenuGlowne_Operacje.setEnabled(false);
-			syg_panelParametry.zablokujPola(true);
-
-		}
-		if (msgPoprawnosc != "ok") {
-			JOptionPane.showMessageDialog(null, msgPoprawnosc, "Błąd próby operacji na sygnałach",
-					JOptionPane.ERROR_MESSAGE);
-		}
-
+		this.syg_WykonajOperacje('*');
 	}
 
 	@Action
 	public void syg_AkcjaOp_Podziel() {
-		// pobranie drugiego sygnału z pliku
-		Akcja_otworz otwarcie = new Akcja_otworz(this.listaSygnalow[1],
-				syg_MenuGlowne_Operacje_Dodaj);
-		listaSygnalow[1] = otwarcie.getSygnal();
-		String msgPoprawnosc = this.sprawdzPoprawnoscOperacji(listaSygnalow[0], listaSygnalow[1]);
-
-		if (msgPoprawnosc == "ok") {
-			int iloscProbek = 0;
-			// pobranie mniejszej ilości próbek
-			if (listaSygnalow[1].getPunktyY_wykres().size() > listaSygnalow[0].getPunktyY_wykres()
-					.size())
-				iloscProbek = listaSygnalow[0].getPunktyY_wykres().size();
-			else
-				iloscProbek = listaSygnalow[1].getPunktyY_wykres().size();
-
-			if (listaSygnalow[2].getPunktyY_wykres() != null)
-				listaSygnalow[2].wyczyscPunkty(true);
-
-			// wpisanie wartości parametrów do nowego sygnału
-			listaSygnalow[2].setRodzaj(rodzaj_sygnalu.DYSKRETNY);
-			listaSygnalow[2].pobierzParametryUzytkownika(listaSygnalow[0].gettyp(),
-					(listaSygnalow[0].getA() / listaSygnalow[1].getA()), listaSygnalow[0].gett1(),
-					listaSygnalow[0].getts(), listaSygnalow[0].getd(), // d
-					listaSygnalow[0].getT(), listaSygnalow[0].getKw(), listaSygnalow[0].getskok());
-			listaSygnalow[2].setkrok(listaSygnalow[0].getkrok());
-
-			// operacja
-			for (int i = 0; i < iloscProbek; i++) {
-				listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
-						/ ((listaSygnalow[1].getPunktzindexu(i) != 0) ? listaSygnalow[1]
-								.getPunktzindexu(i) : 0.0001));
-			}
-
-			// zablokowanie nieedytowalnych wartości i odblokowanie innych
-			syg_panelParametry.cb_wybor123.setEnabled(true);
-			this.syg_MenuGlowne_Operacje.setEnabled(false);
-			syg_panelParametry.zablokujPola(true);
-
-		}
-		if (msgPoprawnosc != "ok") {
-			JOptionPane.showMessageDialog(null, msgPoprawnosc, "Błąd próby operacji na sygnałach",
-					JOptionPane.ERROR_MESSAGE);
-		}
-
+		this.syg_WykonajOperacje('/');
 	}
 
 	private ActionMap getAppActionMap() {
