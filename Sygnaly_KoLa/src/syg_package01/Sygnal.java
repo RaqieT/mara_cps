@@ -7,6 +7,7 @@ import java.util.Random;
 
 import javax.swing.JOptionPane;
 
+import syg_Obliczenia.LiczbaZespolona;
 import syg_Szablony.PanelObslugi.zwracana_wartosc;
 import syg_package01.Filtr.filtr_okno;
 import syg_package01.Filtr.filtr_przepustowosc;
@@ -71,6 +72,7 @@ public class Sygnal {
 	private List<Double> punktyY_wykres = new ArrayList<Double>();
 	private List<Double> punktyY_probkowanie = new ArrayList<Double>();
 	private List<Double> punktyY_kwantyzacja = new ArrayList<Double>();
+	private List<LiczbaZespolona> punktyY_zespolone = new ArrayList<LiczbaZespolona>();
 
 	public List<Double> getPunktyY_kwantyzacja() {
 		return punktyY_kwantyzacja;

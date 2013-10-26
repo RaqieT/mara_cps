@@ -52,6 +52,7 @@ public class Akcja_zapisz {
 			_xstream.omitField(Sygnal.class, "punktyY_wykres");
 			_xstream.omitField(Sygnal.class, "punktyY_probkowanie");
 			_xstream.omitField(Sygnal.class, "punktyY_kwantyzacja");
+			_xstream.omitField(Sygnal.class, "punktyY_zespolone");
 			_xstream.omitField(Sygnal.class, "poziom_kwantyzacji_krok");
 			_xstream.omitField(Sygnal.class, "poziomy_kwantyzacji");
 			if (this.sygnal.gettyp() != 9 || this.sygnal.gettyp() != 10) {
@@ -71,10 +72,32 @@ public class Akcja_zapisz {
 			_xstream.omitField(Sygnal.class, "punktyY_kwantyzacja");
 			_xstream.omitField(Sygnal.class, "poziom_kwantyzacji_krok");
 			_xstream.omitField(Sygnal.class, "poziomy_kwantyzacji");
+			_xstream.omitField(Sygnal.class, "punktyY_zespolone");
+			if (this.sygnal.gettyp() != 9 || this.sygnal.gettyp() != 10) {
+				_xstream.omitField(Sygnal.class, "skok");
+			}
+			
+		}
+		
+		if (this.sygnal.getRodzaj() == RodzajSygnalu.ZESPOLONY)
+		{
+			_xstream.omitField(Sygnal.class, "typ");
+			_xstream.omitField(Sygnal.class, "A");
+			_xstream.omitField(Sygnal.class, "skok");
+			_xstream.omitField(Sygnal.class, "kroczek");
+			_xstream.omitField(Sygnal.class, "kw");
+			_xstream.omitField(Sygnal.class, "ts");
+			_xstream.omitField(Sygnal.class, "T");
+			_xstream.omitField(Sygnal.class, "punktyY_probkowanie");
+			_xstream.omitField(Sygnal.class, "punktyY_kwantyzacja");
+			_xstream.omitField(Sygnal.class, "poziom_kwantyzacji_krok");
+			_xstream.omitField(Sygnal.class, "poziomy_kwantyzacji");
+			_xstream.omitField(Sygnal.class, "punktyY_wykres");
 			if (this.sygnal.gettyp() != 9 || this.sygnal.gettyp() != 10) {
 				_xstream.omitField(Sygnal.class, "skok");
 			}
 		}
+		
 	}
 
 	private void zapisDoPliku() {
