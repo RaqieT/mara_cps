@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import syg_package01.Sygnal;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -45,7 +45,7 @@ public class Akcja_zapisz {
 		_xstream.aliasField("kroczek", Sygnal.class, "kroczek");
 		_xstream.aliasField("krok", Sygnal.class, "krok");
 
-		if (this.sygnal.getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+		if (this.sygnal.getRodzaj() == RodzajSygnalu.CIAGLY) {
 			_xstream.omitField(Sygnal.class, "ts");
 			_xstream.omitField(Sygnal.class, "krok");
 			_xstream.omitField(Sygnal.class, "kroczek");
@@ -59,7 +59,7 @@ public class Akcja_zapisz {
 			}
 		}
 
-		if (this.sygnal.getrodzaj() == rodzaj_sygnalu.DYSKRETNY) {
+		if (this.sygnal.getRodzaj() == RodzajSygnalu.DYSKRETNY) {
 			_xstream.omitField(Sygnal.class, "typ");
 			_xstream.omitField(Sygnal.class, "A");
 			_xstream.omitField(Sygnal.class, "skok");

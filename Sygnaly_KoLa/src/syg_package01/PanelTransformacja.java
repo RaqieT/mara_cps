@@ -17,7 +17,7 @@ import javax.swing.JFrame;
 import syg_Szablony.PanelObslugi;
 import syg_Wykresy.Listener_transformuj;
 import syg_Wykresy.Listener_wyswietlWykres;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 public class PanelTransformacja extends PanelObslugi {
 
@@ -159,7 +159,7 @@ public class PanelTransformacja extends PanelObslugi {
 		String msgPoprawnosci = "<nie zdefiniowano poprawnych waruków>";
 
 		if (this.getCb_transformacja() > 0 && this.getCb_tryb() > 0) {
-			if (sygnal.getrodzaj() == rodzaj_sygnalu.DYSKRETNY) {
+			if (sygnal.getRodzaj() == RodzajSygnalu.DYSKRETNY) {
 				msgPoprawnosci = "ok";
 			}
 			else {

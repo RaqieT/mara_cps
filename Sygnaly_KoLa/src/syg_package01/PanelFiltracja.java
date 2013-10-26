@@ -20,7 +20,7 @@ import syg_Wykresy.Listener_filtruj;
 import syg_Wykresy.PanelRysunek_Filtracja;
 import syg_package01.Filtr.filtr_okno;
 import syg_package01.Filtr.filtr_przepustowosc;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 @SuppressWarnings("serial")
 public class PanelFiltracja extends PanelObslugi {
@@ -159,7 +159,7 @@ public class PanelFiltracja extends PanelObslugi {
 		this.setSygnalFiltrowany(_sygnalFiltrowany);
 		this.setSplitPane(_splitPane);
 		initGUI();
-		this.btn_filtracja.setEnabled(sygnalFiltrowany!= null && sygnalFiltrowany.getrodzaj() != rodzaj_sygnalu.CIAGLY);
+		this.btn_filtracja.setEnabled(sygnalFiltrowany!= null && sygnalFiltrowany.getRodzaj() != RodzajSygnalu.CIAGLY);
 	}
 
 	private void initGUI() {

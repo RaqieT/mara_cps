@@ -15,7 +15,7 @@ import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 
 import syg_package01.Sygnal;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 /**
  */
@@ -57,7 +57,7 @@ public class PanelRysunek_Histogram extends javax.swing.JPanel {
 
 				double ta = this.sygnalWyswietlany.gett1();
 
-				if (this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.CIAGLY
+				if (this.sygnalWyswietlany.getRodzaj() == RodzajSygnalu.CIAGLY
 						|| sygnalWyswietlany.getPunktyY_wykres().size() <= 0) {
 					punkt = this.sygnalWyswietlany.gett1();
 					while (ta <= this.sygnalWyswietlany.gett1() + this.sygnalWyswietlany.getd()) {
@@ -69,7 +69,7 @@ public class PanelRysunek_Histogram extends javax.swing.JPanel {
 						else
 							ta = ta + this.sygnalWyswietlany.getkroczek() * 10;
 					}
-				} else if (this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.DYSKRETNY
+				} else if (this.sygnalWyswietlany.getRodzaj() == RodzajSygnalu.DYSKRETNY
 						&& sygnalWyswietlany.getPunktyY_wykres().size() > 0) {
 					punkt = sygnalWyswietlany.getPunktzindexu(0);
 					int iloscProbek = (int) (this.sygnalWyswietlany.getPunktyY_wykres().size());

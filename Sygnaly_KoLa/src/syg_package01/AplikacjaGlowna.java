@@ -30,7 +30,7 @@ import syg_Pliki.Akcja_zapisz;
 import syg_Wykresy.PanelRysunek_Histogram;
 import syg_Wykresy.PanelRysunek_Wykres;
 import syg_package01.Filtr.filtr_przepustowosc;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 import syg_Symulacja.*;
 
 /**
@@ -203,7 +203,7 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 			int N = 0;
 			double f_p = 1.0D;
 
-			if (this.syg_panelFiltracja.getSygnalFiltrowany().getrodzaj() == rodzaj_sygnalu.CIAGLY)
+			if (this.syg_panelFiltracja.getSygnalFiltrowany().getRodzaj() == RodzajSygnalu.CIAGLY)
 				f_p = 1.0D / this.syg_panelFiltracja.getSygnalFiltrowany().getkroczek();
 			else
 				f_p = 1.0D / this.syg_panelFiltracja.getSygnalFiltrowany().getkrok();
@@ -248,10 +248,10 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 	public void syg_Akcja_Info_Rodzaj() throws HeadlessException {
 		String msgRodzaju = "Rodzaj sygnału:\n";
 
-		if (this.listaSygnalow[this.syg_panelParametry.cb_wybor123.getSelectedIndex()].getrodzaj() == rodzaj_sygnalu.CIAGLY)
+		if (this.listaSygnalow[this.syg_panelParametry.cb_wybor123.getSelectedIndex()].getRodzaj() == RodzajSygnalu.CIAGLY)
 			msgRodzaju += "<html><b>ciągły</b></html>";
 		else if (this.listaSygnalow[this.syg_panelParametry.cb_wybor123.getSelectedIndex()]
-				.getrodzaj() == rodzaj_sygnalu.DYSKRETNY)
+				.getRodzaj() == RodzajSygnalu.DYSKRETNY)
 			msgRodzaju += "<html><b>dyskretny</b></html>";
 		else
 			msgRodzaju += "<html><b>nieokreślony</b></html>";
@@ -376,7 +376,7 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 				this.jSplitPane1.add(syg_panelRysunek_Histogram, JSplitPane.RIGHT);
 			}
 
-			if (this.listaSygnalow[czyDrugi].getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+			if (this.listaSygnalow[czyDrugi].getRodzaj() == RodzajSygnalu.CIAGLY) {
 				this.syg_panelParametry.zablokujPola(false);
 				this.syg_panelParametry.wyczyscPola();
 				this.syg_panelParametry
@@ -387,7 +387,7 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 				this.syg_panelParametry.wyczyscPola();
 				this.syg_panelParametry
 						.odczytajParametryZSygnalu(listaSygnalow[czyDrugi], czyDrugi);
-				if (listaSygnalow[czyDrugi].getrodzaj() == rodzaj_sygnalu.DYSKRETNY) {
+				if (listaSygnalow[czyDrugi].getRodzaj() == RodzajSygnalu.DYSKRETNY) {
 					this.syg_MenuGlowne_Operacje.setEnabled(true);
 				}
 			}
@@ -398,7 +398,7 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 
 			syg_Tab1.getTabComponentAt(1).setEnabled(false);
 			syg_Tab1.setEnabledAt(1, false);
-			if (this.listaSygnalow[czyDrugi].getrodzaj() != rodzaj_sygnalu.CIAGLY)
+			if (this.listaSygnalow[czyDrugi].getRodzaj() != RodzajSygnalu.CIAGLY)
 				this.syg_panelFiltracja.getBtn_filtracja().setEnabled(true);
 			// syg_Tab1.getTabComponentAt(2).setEnabled(false);
 			// syg_Tab1.setEnabledAt(2, false);
@@ -417,7 +417,7 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 
 		if (msgPoprawnosc == "ok") {
 
-			if (this.listaSygnalow[id].getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+			if (this.listaSygnalow[id].getRodzaj() == RodzajSygnalu.CIAGLY) {
 				listaSygnalow[id] = this.syg_panelParametry.zapiszParametryDoSygnalu();
 
 				// konwersja dla zapisu sygnału
@@ -426,7 +426,7 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 						"Zapis sygnału", JOptionPane.YES_NO_OPTION);
 
 				if (czyDyskretny == 0) {
-					this.listaSygnalow[id].setRodzaj(rodzaj_sygnalu.DYSKRETNY);
+					this.listaSygnalow[id].setRodzaj(RodzajSygnalu.DYSKRETNY);
 
 					// ustalenie częstotliwości próbkowania
 					JFormattedTextField f_s = new JFormattedTextField(Double.TYPE);
@@ -477,11 +477,11 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 	private String sprawdzPoprawnoscOperacji(Sygnal _sygnalA, Sygnal _sygnalB) {
 		// TODO Auto-generated method stub
 		String msg = "";
-		if (_sygnalA.porownajSygnal(_sygnalB, rodzaj_sygnalu.DYSKRETNY)) {
+		if (_sygnalA.porownajSygnal(_sygnalB, RodzajSygnalu.DYSKRETNY)) {
 			msg = "ok";
 		} else {
-			if (_sygnalA.getrodzaj() == rodzaj_sygnalu.CIAGLY
-					|| _sygnalB.getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+			if (_sygnalA.getRodzaj() == RodzajSygnalu.CIAGLY
+					|| _sygnalB.getRodzaj() == RodzajSygnalu.CIAGLY) {
 				msg = "Sygnały nie mogą być dodane. Przynajmniej jeden z nich jest ciągły.";
 			} else
 				msg = "Sygnały nie mogą być dodane. Odpowiednie wartości nie są równe.";
@@ -532,7 +532,7 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 				listaSygnalow[2].wyczyscPunkty(true);
 
 			// wpisanie wartości parametrów do nowego sygnału
-			listaSygnalow[2].setRodzaj(rodzaj_sygnalu.DYSKRETNY);
+			listaSygnalow[2].setRodzaj(RodzajSygnalu.DYSKRETNY);
 			double amp = 0.0;
 			switch (_znakOperacji) {
 			case '+':
@@ -643,9 +643,9 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 			listaSygnalow = new Sygnal[3];
 			listaSygnalow[0] = new Sygnal();
 			listaSygnalow[1] = new Sygnal();
-			this.listaSygnalow[1].setRodzaj(rodzaj_sygnalu.DYSKRETNY);
+			this.listaSygnalow[1].setRodzaj(RodzajSygnalu.DYSKRETNY);
 			listaSygnalow[2] = new Sygnal();
-			this.listaSygnalow[2].setRodzaj(rodzaj_sygnalu.DYSKRETNY);
+			this.listaSygnalow[2].setRodzaj(RodzajSygnalu.DYSKRETNY);
 
 			syg_MenuGlowne = new JMenuBar();
 			getMainFrame().setJMenuBar(syg_MenuGlowne);

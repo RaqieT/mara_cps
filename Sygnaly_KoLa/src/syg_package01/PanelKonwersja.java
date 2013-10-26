@@ -15,7 +15,7 @@ import syg_Obliczenia.Listener_obliczMiary;
 import syg_Szablony.PanelObslugi;
 import syg_Wykresy.Listener_konwertuj;
 import syg_Wykresy.PanelRysunek_Konwersja;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 @SuppressWarnings("serial")
 public class PanelKonwersja extends PanelObslugi {
@@ -182,7 +182,7 @@ public class PanelKonwersja extends PanelObslugi {
 
 		if (this.krokZmian == 0) {
 			msgPoprawnosci = "ok";
-			if (this.sygnalKonwertowany.getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+			if (this.sygnalKonwertowany.getRodzaj() == RodzajSygnalu.CIAGLY) {
 			} else {
 				msgPoprawnosci = "Sygnał nie jest ciągły.\n";
 			}
@@ -200,18 +200,18 @@ public class PanelKonwersja extends PanelObslugi {
 		}
 
 		if (this.krokZmian == 1) {
-			msgPoprawnosci = (this.sygnalKonwertowany.getrodzaj() == rodzaj_sygnalu.DYSKRETNY ? "ok"
+			msgPoprawnosci = (this.sygnalKonwertowany.getRodzaj() == RodzajSygnalu.DYSKRETNY ? "ok"
 					: "sygnał nie jest dyskretny");
 		}
 
 		if (this.krokZmian == 2) {
-			msgPoprawnosci = (this.sygnalKonwertowany.getrodzaj() == rodzaj_sygnalu.SPROBKOWANY ? "ok"
+			msgPoprawnosci = (this.sygnalKonwertowany.getRodzaj() == RodzajSygnalu.SPROBKOWANY ? "ok"
 					: "sygnał nie jest spróbkowany");
 		}
 
 		if (this.krokZmian == 3) {
 
-			msgPoprawnosci = (this.sygnalKonwertowany.getrodzaj() == rodzaj_sygnalu.SPROBKOWANY ? "ok"
+			msgPoprawnosci = (this.sygnalKonwertowany.getRodzaj() == RodzajSygnalu.SPROBKOWANY ? "ok"
 					: "sygnał nie jest spróbkowany");
 		}
 
@@ -229,16 +229,16 @@ public class PanelKonwersja extends PanelObslugi {
 		if (_oIle == 1) {
 			switch (this.krokZmian) {
 			case 0:
-				this.sygnalKonwertowany.setRodzaj(rodzaj_sygnalu.SPROBKOWANY);
+				this.sygnalKonwertowany.setRodzaj(RodzajSygnalu.SPROBKOWANY);
 				break;
 			case 1:
-				this.sygnalKonwertowany.setRodzaj(rodzaj_sygnalu.SKWANTOWANY);
+				this.sygnalKonwertowany.setRodzaj(RodzajSygnalu.SKWANTOWANY);
 				break;
 			case 2:
-				this.sygnalKonwertowany.setRodzaj(rodzaj_sygnalu.ZINTERPOLOWANY);
+				this.sygnalKonwertowany.setRodzaj(RodzajSygnalu.ZINTERPOLOWANY);
 				break;
 			case 3:
-				this.sygnalKonwertowany.setRodzaj(rodzaj_sygnalu.ZREKONSTRUOWANY);
+				this.sygnalKonwertowany.setRodzaj(RodzajSygnalu.ZREKONSTRUOWANY);
 				break;
 
 			default:
@@ -248,16 +248,16 @@ public class PanelKonwersja extends PanelObslugi {
 		if (_oIle == 2) {
 			switch (this.krokZmian) {
 			case 0:
-				this.sygnalKonwertowany.setRodzaj(rodzaj_sygnalu.SPROBKOWANY);
+				this.sygnalKonwertowany.setRodzaj(RodzajSygnalu.SPROBKOWANY);
 				break;
 			case 1:
-				this.sygnalKonwertowany.setRodzaj(rodzaj_sygnalu.SPROBKOWANY);
+				this.sygnalKonwertowany.setRodzaj(RodzajSygnalu.SPROBKOWANY);
 				break;
 			case 2:
-				this.sygnalKonwertowany.setRodzaj(rodzaj_sygnalu.ZINTERPOLOWANY);
+				this.sygnalKonwertowany.setRodzaj(RodzajSygnalu.ZINTERPOLOWANY);
 				break;
 			case 3:
-				this.sygnalKonwertowany.setRodzaj(rodzaj_sygnalu.ZINTERPOLOWANY);
+				this.sygnalKonwertowany.setRodzaj(RodzajSygnalu.ZINTERPOLOWANY);
 				break;
 
 			default:
@@ -289,7 +289,7 @@ public class PanelKonwersja extends PanelObslugi {
 	 */
 	public void przestawKrokDoPoczatku() {
 		this.przestawKrok(this.labels.length - this.krokZmian);
-		if (this.sygnalKonwertowany.getrodzaj() != rodzaj_sygnalu.DYSKRETNY)
+		if (this.sygnalKonwertowany.getRodzaj() != RodzajSygnalu.DYSKRETNY)
 			this.sygnalKonwertowany.setrodzajciagly();
 	}
 

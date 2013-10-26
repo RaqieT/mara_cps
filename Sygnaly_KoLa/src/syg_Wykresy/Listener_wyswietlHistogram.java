@@ -11,7 +11,7 @@ import javax.swing.JTabbedPane;
 import syg_package01.PanelKonwersja;
 import syg_package01.PanelParametry;
 import syg_package01.Sygnal;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 public class Listener_wyswietlHistogram implements ActionListener {
 

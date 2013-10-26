@@ -22,7 +22,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import syg_package01.Filtr;
 import syg_package01.PanelFiltracja;
 import syg_package01.Sygnal;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 @SuppressWarnings("serial")
 public class PanelRysunek_Filtracja extends javax.swing.JPanel {
@@ -67,7 +67,7 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 			try {
 				XYSeriesCollection dataset = new XYSeriesCollection(series);
 
-				if (this.getSygnal().getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+				if (this.getSygnal().getRodzaj() == RodzajSygnalu.CIAGLY) {
 					chart = ChartFactory.createXYLineChart(null, null, null, dataset,
 							PlotOrientation.VERTICAL, true, true, true);
 
@@ -146,7 +146,7 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 			for (int i = this.filtr.getLiczbaWspolczynnikow(); i < ileIndeksow; i++) {
 				_series.add(czas, this.getSygnal().splot(i, this.filtr));
 				
-				if (this.getSygnal().getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+				if (this.getSygnal().getRodzaj() == RodzajSygnalu.CIAGLY) {
 					czas += this.getSygnal().getkroczek();
 				} else {
 					czas += this.getSygnal().getkrok();
@@ -188,8 +188,8 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 									this.getSygnaly()[1], ktoraOpcja));
 
 					// odstęp czasu
-					if (this.getSygnaly()[0].getrodzaj() == rodzaj_sygnalu.CIAGLY
-							&& this.getSygnaly()[1].getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+					if (this.getSygnaly()[0].getRodzaj() == RodzajSygnalu.CIAGLY
+							&& this.getSygnaly()[1].getRodzaj() == RodzajSygnalu.CIAGLY) {
 						czas += this.getSygnaly()[0].getkroczek();
 					} else {
 						czas += this.getSygnaly()[0].getkrok();

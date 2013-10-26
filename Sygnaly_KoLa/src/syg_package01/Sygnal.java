@@ -1,5 +1,6 @@
 ﻿package syg_package01;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,7 +14,7 @@ import org.apache.commons.math.complex.Complex;
 
 //jfreechart
 public class Sygnal {
-	public enum rodzaj_sygnalu {
+	public enum RodzajSygnalu {
 		CIAGLY, DYSKRETNY, SPROBKOWANY, SKWANTOWANY, ZINTERPOLOWANY, ZREKONSTRUOWANY, ZESPOLONY
 	}
 
@@ -23,7 +24,7 @@ public class Sygnal {
 	 */
 	int typ;
 
-	rodzaj_sygnalu rodzaj = rodzaj_sygnalu.CIAGLY;
+	RodzajSygnalu rodzaj = RodzajSygnalu.CIAGLY;
 	/**
 	 * <b>Amplituda sygnału.</b><br>
 	 * Wymagane parametry sygnału: <li>ciągły
@@ -82,8 +83,6 @@ public class Sygnal {
 	public void setPunktyY_kwantyzacja(double punktyY_kwantyzacja) {
 		this.punktyY_kwantyzacja.add(punktyY_kwantyzacja);
 	}
-
-	
 
 	/**
 	 * Poziom kwantyzacji - krok przemieszczenia pomiędzy nimi
@@ -269,116 +268,276 @@ public class Sygnal {
 	}
 
 	/**
-	 * Obliczenia dla sygnału dyskretnego: wartość średnia
+	 * Obliczenie całki<br>
+	 * <a href="http://edu.i-lo.tarnow.pl/inf/alg/004_int/0003.php">Źródło</a>
+	 * 
+	 * @param _xp
+	 *            - początek przedziało całkowania
+	 * @param _xk
+	 *            - koniec przedziału całkowania
+	 * @param _n
+	 *            - liczba punktów podziałowych
+	 * @param _typ
+	 * @return
+	 */
+	private double obl_calka(double _xp, double _xk, double _n) {
+		double dx = 0; // odległość między dwoma sąsiednimi punktami
+						// podziałowymi
+		double s = 0; // wynik
+		int i = 0; // licznik
+
+		if (_n <= 0)
+			_n = 10;
+
+		dx = (_xk - _xp) / _n;
+
+		while (++i < _n) {
+			s += wykres_punkty(s, _xp + (i * dx));
+		}
+		s = (s + (wykres_punkty(s, _xp) + wykres_punkty(s, _xk)) * 0.5) * dx;
+
+		return s;
+	}
+	private double obl_calkaAbs(double _xp, double _xk, double _n) {
+		double dx = 0; // odległość między dwoma sąsiednimi punktami
+						// podziałowymi
+		double s = 0; // wynik
+		int i = 0; // licznik
+
+		if (_n <= 0)
+			_n = 10;
+
+		dx = (_xk - _xp) / _n;
+
+		while (++i < _n) {
+			s += Math.abs(wykres_punkty(s, _xp + (i * dx)));
+		}
+		s = (s + (wykres_punkty(s, _xp) + wykres_punkty(s, _xk)) * 0.5) * dx;
+
+		return s;
+	}
+
+	/**
+	 * Całka z x^2(t)
+	 * 
+	 * @param _xp
+	 * @param _xk
+	 * @param _n
+	 * @return
+	 */
+	private double obl_calkaKw(double _xp, double _xk, double _n) {
+		double dx = 0; // odległość między dwoma sąsiednimi punktami
+						// podziałowymi
+		double s = 0; // wynik
+		int i = 0; // licznik
+
+		if (_n <= 0)
+			_n = 10;
+
+		dx = (_xk - _xp) / _n;
+
+		while (++i < _n) {
+			s += Math.pow((wykres_punkty(s, _xp + (i * dx))), 2);
+		}
+		s = (s + (wykres_punkty(s, _xp) + wykres_punkty(s, _xk)) * 0.5) * dx;
+
+		return s;
+	}
+
+	/**
+	 * Całka z (x(t) + wartosc)^2
+	 * 
+	 * @param _xp
+	 * @param _xk
+	 * @param _n
+	 * @param _wartoscDodawana
+	 * @return
+	 */
+	private double obl_calkaKwMinSr(double _xp, double _xk, double _n, double _wartoscDodawana) {
+		double dx = 0; // odległość między dwoma sąsiednimi punktami
+						// podziałowymi
+		double s = 0; // wynik
+		int i = 0; // licznik
+
+		if (_n <= 0)
+			_n = 10;
+
+		dx = (_xk - _xp) / _n;
+
+		while (++i < _n) {
+			s += Math.pow((wykres_punkty(s, _xp + (i * dx)) + _wartoscDodawana), 2);
+		}
+		s = (s + (wykres_punkty(s, _xp) + wykres_punkty(s, _xk)) * 0.5) * dx;
+
+		return s;
+	}
+
+	/**
+	 * Obliczenia dla sygnału dyskretnego lub ciągłego: wartość średnia
 	 * 
 	 * @param _rodzaj
 	 *            : rodzaj_sygnalu
 	 * @return: double
 	 */
-	public double obl_sredniawartosc(rodzaj_sygnalu _rodzaj) {
+	public double obl_sredniawartosc(RodzajSygnalu _rodzaj) {
 		int i;
 		double srednia = 0;
 		int size = 0;
-		if (_rodzaj == rodzaj_sygnalu.DYSKRETNY) {
-
-			if (this.gettyp() == 3 || this.gettyp() == 4 || this.gettyp() == 5
-					|| this.gettyp() == 6 || this.gettyp() == 7 || this.gettyp() == 8) {
-				// double now= this.getT();
-				double _krok = this.gett1();
-				int liczba = 0;
-
-				while (_krok < this.getT()) {
-					srednia = srednia + this.getPunktzindexu(liczba);
-					liczba = liczba + 1;
-					_krok = _krok + this.getkrok();
-				}
-				size = liczba;
-			} else {
-				for (i = 0; i < this.getPunktyY_wykres().size(); i++) {
-					srednia = srednia + this.getPunktzindexu(i);
-
-				}
-
-				size = this.getPunktyY_wykres().size();
+		if (_rodzaj == RodzajSygnalu.DYSKRETNY) {
+			for (i = 0; i < this.getPunktyY_wykres().size(); i++) {
+				srednia = srednia + this.getPunktzindexu(i);
 			}
-
+			size = this.getPunktyY_wykres().size();
+			srednia /= size;
+		} else {
+			if (this.d >= this.T) {
+				double t2 = this.t1 + (Math.floor(this.d / this.T)) * this.T;
+				srednia = (this.obl_calka(this.t1, t2, this.d / this.kroczek)) / (t2 - this.t1);
+			}
 		}
 
-		return srednia / size;
+		return obl_zaokr(srednia);
 	}
 
-	public double obl_sredniawartoscbezwzgledna(rodzaj_sygnalu _rodzaj) {
+	/**
+	 * miejsca po przecinku
+	 * @param _liczba
+	 * @param _miejscPoPrzec
+	 * @return
+	 */
+	private double obl_zaokr(double _liczba, int _miejscPoPrzec) {
+		_liczba *= (10*_miejscPoPrzec);
+		_liczba = Math.round(_liczba) * 1.0;
+		_liczba /= (10*_miejscPoPrzec);
+		return _liczba;
+	}
+	/**
+	 * Domyślne zaokrąglenie: 3 miejsca po przecinku
+	 * @param _liczba
+	 * @return
+	 */
+	private double obl_zaokr(double _liczba) {
+		return this.obl_zaokr(_liczba, 3);
+	}
+
+	public double obl_sredniawartoscbezwzgledna(RodzajSygnalu _rodzaj) {
 		int i;
 		double srednia = 0;
 		double liczba = 0;
-		if (_rodzaj == rodzaj_sygnalu.DYSKRETNY) {
+		if (_rodzaj == RodzajSygnalu.DYSKRETNY) {
 			for (i = 0; i < this.getPunktyY_wykres().size(); i++) {
 				liczba = Math.abs(this.getPunktzindexu(i));
 				srednia = srednia + liczba;
 
 			}
+			srednia /= this.getPunktyY_wykres().size();
+		} else {
+			if (this.d >= this.T) {
+				double t2 = this.t1 + (Math.floor(this.d / this.T)) * this.T;
+				srednia = 1.0 / (t2 - this.t1)
+						* (this.obl_calkaAbs(this.t1, t2, this.d / this.kroczek));
+			}
 		}
 
-		return srednia / this.getPunktyY_wykres().size();
+		return obl_zaokr(srednia);
 	}
 
-	public double obl_mocsrednia(rodzaj_sygnalu _rodzaj) {
+	public double obl_mocsrednia(RodzajSygnalu _rodzaj) {
 		int i;
 		double moc = 0;
-		if (_rodzaj == rodzaj_sygnalu.DYSKRETNY) {
+		if (_rodzaj == RodzajSygnalu.DYSKRETNY) {
 			for (i = 0; i < this.getPunktyY_wykres().size(); i++) {
-				moc = moc + (this.getPunktzindexu(i) * this.getPunktzindexu(i));
+				moc += (this.getPunktzindexu(i) * this.getPunktzindexu(i));
 
 			}
-
-		}
-		return moc / this.getPunktyY_wykres().size();
-	}
-
-	public double obl_wartoscskuteczna(rodzaj_sygnalu _rodzaj) {
-		int i;
-		double moc = 0;
-		if (_rodzaj == rodzaj_sygnalu.DYSKRETNY) {
-			for (i = 0; i < this.getPunktyY_wykres().size(); i++) {
-				moc = moc + (this.getPunktzindexu(i) * this.getPunktzindexu(i));
-
-			}
-
-		}
-		return Math.sqrt(moc / this.getPunktyY_wykres().size());
-	}
-
-	public double obl_wariancja(rodzaj_sygnalu _rodzaj) {
-		int i;
-		double wariancja = 0;
-		if (_rodzaj == rodzaj_sygnalu.DYSKRETNY) {
-			for (i = 0; i < this.getPunktyY_wykres().size(); i++) {
-				double _wartosc = this.getPunktzindexu(i)
-						- this.obl_sredniawartosc(rodzaj_sygnalu.DYSKRETNY);
-				wariancja = wariancja + (_wartosc * _wartosc);
+			moc /= this.getPunktyY_wykres().size();
+		} else {
+			if (this.d >= this.T) {
+				double t2 = this.t1 + (Math.floor(this.d / this.T)) * this.T;
+				moc = 1.0 / (t2 - this.t1) * (this.obl_calkaKw(this.t1, t2, this.d / this.kroczek));
 			}
 		}
-		return wariancja / this.getPunktyY_wykres().size();
+		return obl_zaokr(moc);
 	}
 
 	/**
-	 * Dla sygnału dyskretnego: sprawdzenie czasów początkowych i kroków.
-	 * Dla innych rodzajów sygnałów: sprawdzenie czy ten sam rodzaj.
-	 * @param _sygnalPorownywany
-	 * @param _sprawdzanyRodzaj /rodzaj_sygnalu/
+	 * RMS
+	 * 
+	 * @param _rodzaj
 	 * @return
 	 */
-	public boolean porownajSygnal(Sygnal _sygnalPorownywany, rodzaj_sygnalu _sprawdzanyRodzaj) {
-		if (_sprawdzanyRodzaj == rodzaj_sygnalu.DYSKRETNY)
-		{
-			return (_sygnalPorownywany.getrodzaj() == _sprawdzanyRodzaj
-					&& this.rodzaj == _sprawdzanyRodzaj
-					&& (this.t1 == _sygnalPorownywany.gett1() && this.getkrok() == _sygnalPorownywany
-				.getkrok()));
-		}else
-		{
-			return (_sygnalPorownywany.getrodzaj() == _sprawdzanyRodzaj
-					&& this.rodzaj == _sprawdzanyRodzaj);
+	public double obl_wartoscskuteczna(RodzajSygnalu _rodzaj) {
+		int i;
+		double wynik = 0;
+		if (_rodzaj == RodzajSygnalu.DYSKRETNY) {
+			for (i = 0; i < this.getPunktyY_wykres().size(); i++) {
+				wynik = wynik + (this.getPunktzindexu(i) * this.getPunktzindexu(i));
+			}
+			if (wynik >= 0) {
+				wynik = Math.sqrt(wynik / this.getPunktyY_wykres().size());
+			}
+		} else {
+			wynik = this.obl_mocsrednia(_rodzaj);
+			if (wynik >= 0) {
+				wynik = Math.sqrt(wynik);
+			}
+		}
+		return obl_zaokr(wynik);
+	}
+
+	/**
+	 * wariancja sygnału w przedziale wokół wartości średniej
+	 * 
+	 * @param _rodzaj
+	 * @return
+	 */
+	public double obl_wariancja(RodzajSygnalu _rodzaj) {
+		int i;
+		double wariancja = 0;
+		if (_rodzaj == RodzajSygnalu.DYSKRETNY) {
+			for (i = 0; i < this.getPunktyY_wykres().size(); i++) {
+				double _wartosc = this.getPunktzindexu(i)
+						- this.obl_sredniawartosc(RodzajSygnalu.DYSKRETNY);
+				wariancja = wariancja + (_wartosc * _wartosc);
+			}
+			wariancja /= this.getPunktyY_wykres().size();
+		} else {
+			if (this.d >= this.T) {
+				double t2 = this.t1 + (Math.floor(this.d / this.T)) * this.T;
+				wariancja = 1.0
+						/ (t2 - this.t1)
+						* (this.obl_calkaKwMinSr(this.t1, t2, this.d / this.kroczek,
+								-this.obl_sredniawartosc(_rodzaj)));
+			}
+		}
+		return obl_zaokr(wariancja);
+	}
+
+	/**
+	 * Sprawdzenie czy sygnał jest typem <3;8> i ma okres dodatni.
+	 * 
+	 * @return
+	 */
+	public boolean czyOkresowy() {
+		return (this.gettyp() > 2 && this.gettyp() < 9 && this.getT() > 0);
+	}
+
+	/**
+	 * Dla sygnału dyskretnego: sprawdzenie czasów początkowych i kroków. Dla
+	 * innych rodzajów sygnałów: sprawdzenie czy ten sam rodzaj.
+	 * 
+	 * @param _sygnalPorownywany
+	 * @param _sprawdzanyRodzaj
+	 *            /rodzaj_sygnalu/
+	 * @return
+	 */
+	public boolean porownajSygnal(Sygnal _sygnalPorownywany, RodzajSygnalu _sprawdzanyRodzaj) {
+		if (_sprawdzanyRodzaj == RodzajSygnalu.DYSKRETNY) {
+			return (_sygnalPorownywany.getRodzaj() == _sprawdzanyRodzaj
+					&& this.rodzaj == _sprawdzanyRodzaj && (this.t1 == _sygnalPorownywany.gett1() && this
+					.getkrok() == _sygnalPorownywany.getkrok()));
+		} else {
+			return (_sygnalPorownywany.getRodzaj() == _sprawdzanyRodzaj && this.rodzaj == _sprawdzanyRodzaj);
 		}
 	}
 
@@ -397,7 +556,7 @@ public class Sygnal {
 	}
 
 	public double sin2piTtminT1(double _t) {
-		return Math.sin(((2.0 * Math.PI) / (double)this.getT()) * (double)(_t - this.gett1()));
+		return Math.sin(((2.0 * Math.PI) / (double) this.getT()) * (double) (_t - this.gett1()));
 	}
 
 	public double getkrok() {
@@ -409,18 +568,26 @@ public class Sygnal {
 	}
 
 	public void setrodzajciagly() {
-		this.rodzaj = rodzaj_sygnalu.CIAGLY;
+		this.rodzaj = RodzajSygnalu.CIAGLY;
 	}
 
 	public void setrodzajdyskretny() {
-		this.rodzaj = rodzaj_sygnalu.DYSKRETNY;
+		this.rodzaj = RodzajSygnalu.DYSKRETNY;
 	}
 
-	public rodzaj_sygnalu getrodzaj() {
+	public RodzajSygnalu getRodzaj() {
 		return this.rodzaj;
 	}
 
-	public void setRodzaj(rodzaj_sygnalu rodzaj) {
+	public RodzajSygnalu getRodzajDlaObl() {
+		if (this.getRodzaj() == RodzajSygnalu.CIAGLY && this.gettyp() > 9) {
+			return RodzajSygnalu.DYSKRETNY;
+		} else {
+			return this.rodzaj;
+		}
+	}
+
+	public void setRodzaj(RodzajSygnalu rodzaj) {
 		this.rodzaj = rodzaj;
 	}
 
@@ -444,18 +611,18 @@ public class Sygnal {
 	}
 
 	/**
-	 * Zwraca różnice między argumentami (dla sygnałów ciągłych: 1000 próbek; dla dyskretnych: ok. 100)
+	 * Zwraca różnice między argumentami (dla sygnałów ciągłych: 1000 próbek;
+	 * dla dyskretnych: ok. 100)
+	 * 
 	 * @return
 	 */
 	public double getkroczek() {
-		if (this.gettyp() == 10)
-		{
-			this.kroczek = (this.getskok() - this.gett1()) /(Math.floor(100.0*(this.getskok() - this.gett1())/this.getd())*1.0);
-		}else if (this.gettyp() == 11)
-		{
-			this.kroczek = (this.getd() - this.gett1()) /100.0;
-		}else
-		if (this.getrodzaj() == rodzaj_sygnalu.CIAGLY)
+		if (this.gettyp() == 10) {
+			this.kroczek = (this.getskok() - this.gett1())
+					/ (Math.floor(100.0 * (this.getskok() - this.gett1()) / this.getd()) * 1.0);
+		} else if (this.gettyp() == 11) {
+			this.kroczek = (this.getd() - this.gett1()) / 100.0;
+		} else if (this.getRodzaj() == RodzajSygnalu.CIAGLY)
 			this.kroczek = (this.getd() - this.gett1()) / 1000.0;
 		return this.kroczek;
 	}
@@ -626,6 +793,7 @@ public class Sygnal {
 
 	/**
 	 * Sygnał sinusoidalny wyprostowany jednopołówkowo
+	 * 
 	 * @param t
 	 * @return
 	 */
@@ -635,6 +803,7 @@ public class Sygnal {
 
 	/**
 	 * Sygnał sinusoidalny wyprostowany dwupołówkowo
+	 * 
 	 * @param t
 	 * @return
 	 */
@@ -653,7 +822,8 @@ public class Sygnal {
 
 		double k = Math.floor((t - this.gett1()) / this.getT());
 
-		if (t >= k*this.getT()+this.gett1() && t < this.getKw()*this.getT()+k*this.getT()+this.gett1())
+		if (t >= k * this.getT() + this.gett1()
+				&& t < this.getKw() * this.getT() + k * this.getT() + this.gett1())
 			return this.getA();
 		else
 			return 0;
@@ -661,13 +831,15 @@ public class Sygnal {
 
 	/**
 	 * Sygnał prostokątny symetryczny
+	 * 
 	 * @param t
 	 * @return
 	 */
 	public double sygnalS7(double t) {
 		double k = Math.floor((t - this.gett1()) / this.getT());
 
-		if (t >= k*this.getT()+this.gett1() && t < this.getKw()*this.getT()+k*this.getT()+this.gett1())
+		if (t >= k * this.getT() + this.gett1()
+				&& t < this.getKw() * this.getT() + k * this.getT() + this.gett1())
 			return this.getA();
 		else
 			return -this.getA();
@@ -675,22 +847,23 @@ public class Sygnal {
 
 	/**
 	 * Sygnał trójkątny
+	 * 
 	 * @param t
 	 * @return
 	 */
 	public double sygnalS8(double t) {
 		double k = Math.floor((t - this.gett1()) / this.getT());
 
-			if (t >= k * this.getT() + this.gett1()
-					&& t < this.getKw() * this.getT() + k * this.getT() - this.gett1()) {
-				return (this.getA() / (this.getKw() * this.getT()))
-						* (t - k * this.getT() - this.gett1());
+		if (t >= k * this.getT() + this.gett1()
+				&& t < this.getKw() * this.getT() + k * this.getT() - this.gett1()) {
+			return (this.getA() / (this.getKw() * this.getT()))
+					* (t - k * this.getT() - this.gett1());
 
-			} else {
-				return (-this.getA()) / (this.getT() * (1 - this.getKw()))
-						* (t - k * this.getT() - this.gett1()) + this.getA() / (1 - this.getKw());
+		} else {
+			return (-this.getA()) / (this.getT() * (1 - this.getKw()))
+					* (t - k * this.getT() - this.gett1()) + this.getA() / (1 - this.getKw());
 
-			}
+		}
 	}
 
 	/**
@@ -712,13 +885,14 @@ public class Sygnal {
 
 	/**
 	 * Impuls jednostkowy
+	 * 
 	 * @param t
 	 * @return
 	 */
 	public double sygnalS10(double t) {
 
-		//przybliżenie związane z nietokładnym trafieniem próbki w skok
-		if (t >= this.skok-this.skok*0.001 && t < this.skok+this.skok*0.001) {
+		// przybliżenie związane z nietokładnym trafieniem próbki w skok
+		if (t >= this.skok - this.skok * 0.001 && t < this.skok + this.skok * 0.001) {
 			return this.getA();
 		} else {
 			return 0;
@@ -728,6 +902,7 @@ public class Sygnal {
 
 	/**
 	 * Szum impulsowy
+	 * 
 	 * @param t
 	 * @return
 	 */
@@ -742,17 +917,18 @@ public class Sygnal {
 		}
 
 	}
-	
+
 	/**
-	 * Sygnał dla zadania 4: S2
-	 * S(t)=2*sin(2PI/2*t)+sin(2PI/1*t)+5sin(2PI/0,5*t) f_pr=16
+	 * Sygnał dla zadania 4: S2 S(t)=2*sin(2PI/2*t)+sin(2PI/1*t)+5sin(2PI/0,5*t)
+	 * f_pr=16
+	 * 
 	 * @param t
 	 * @return
 	 */
 	public double sygnalS12(double t) {
 
-		double PI2t = 2*Math.PI*t;
-		return 2*Math.sin(PI2t*0.5*t)+Math.sin(PI2t*t)+5*Math.sin(PI2t*2*t);
+		double PI2t = 2 * Math.PI * t;
+		return 2 * Math.sin(PI2t * 0.5 * t) + Math.sin(PI2t * t) + 5 * Math.sin(PI2t * 2 * t);
 
 	}
 
@@ -867,7 +1043,7 @@ public class Sygnal {
 	 * @return
 	 */
 	public double odpowiedzImpulsowa(int _n, Filtr _filtr, boolean _czy2sygnal, Sygnal _sygnal) {
-		double f_p = 1.0D / ((_sygnal.getrodzaj() == rodzaj_sygnalu.CIAGLY) ? (_sygnal.getkroczek())
+		double f_p = 1.0D / ((_sygnal.getRodzaj() == RodzajSygnalu.CIAGLY) ? (_sygnal.getkroczek())
 				: (_sygnal.getkrok()));
 		double f_0 = _filtr.getCzestotliwoscObciecia();
 		int M = (!_czy2sygnal ? _filtr.getLiczbaWspolczynnikow() : _sygnal.getPunktyY_wykres()
@@ -965,11 +1141,11 @@ public class Sygnal {
 
 		return R_n;
 	}
-	
+
 	private static Complex W(int m, int N) {
 		return new Complex(Math.cos(2 * Math.PI * m / N), -Math.sin(2 * Math.PI * m / N));
 	}
-	
+
 	public List<Complex> FFT(List<Double> punktyY) {
 		Complex gora, dol;
 		int motylkiWbloku; // liczba motylkow w bloku;
@@ -997,8 +1173,7 @@ public class Sygnal {
 					indexA = i * N + j;
 					indexB = indexA + motylkiWbloku;
 					gora = listaTemp.get(indexA).add(listaTemp.get(indexB));
-					dol = listaTemp.get(indexA).subtract(listaTemp.get(indexB))
-							.multiply(W(j, N));
+					dol = listaTemp.get(indexA).subtract(listaTemp.get(indexB)).multiply(W(j, N));
 					listaTemp.set(indexA, gora);
 					listaTemp.set(indexB, dol);
 				}
@@ -1013,20 +1188,19 @@ public class Sygnal {
 
 		return transformata;
 	}
-	
+
 	public static List<Complex> DFT(List<Double> punktyY) {
 		List<Complex> wynik = new ArrayList<Complex>();
 		for (int m = 0; m < punktyY.size(); m++) {
 			Complex suma = new Complex(0, 0);
 			for (int n = 0; n < punktyY.size(); n++) {
-				suma = suma.add(W(m * n, punktyY.size()).multiply(
-						punktyY.get(n)));
+				suma = suma.add(W(m * n, punktyY.size()).multiply(punktyY.get(n)));
 			}
 			wynik.add(suma);
 		}
 		return wynik;
 	}
-	
+
 	public static int odwrocBity(int liczba, int liczbaBitow) {
 		int wynik = 0;
 		int bit;

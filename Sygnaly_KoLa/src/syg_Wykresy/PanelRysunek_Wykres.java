@@ -16,7 +16,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import syg_package01.Sygnal;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
@@ -70,20 +70,20 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 			if (this.wykres) {
 
 				XYSeries series = new XYSeries("Sygnał "
-						+ ((this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.CIAGLY
+						+ ((this.sygnalWyswietlany.getRodzaj() == RodzajSygnalu.CIAGLY
 								&& this.sygnalWyswietlany.gettyp() < 10) ? "ciągły"
 								: "dyskretny"));
 				double punkt;
 				double ta = this.sygnalWyswietlany.gett1();
 
-				if (this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.CIAGLY
+				if (this.sygnalWyswietlany.getRodzaj() == RodzajSygnalu.CIAGLY
 						|| sygnalWyswietlany.getPunktyY_wykres().size() <= 0) {
 					punkt = this.sygnalWyswietlany.gett1();
 					while (ta <= this.sygnalWyswietlany.gett1() + this.sygnalWyswietlany.getd()) {
 						punkt = this.sygnalWyswietlany.wykres_punkty(punkt, ta);
 						this.sygnalWyswietlany.setPunktyY_wykres(punkt);
 						series.add(ta, punkt);
-						if (this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+						if (this.sygnalWyswietlany.getRodzaj() == RodzajSygnalu.CIAGLY) {
 							if (/*this.sygnalWyswietlany.gettyp() != 9
 									&& */this.sygnalWyswietlany.gettyp() != 10
 									&& this.sygnalWyswietlany.gettyp() != 11)
@@ -99,7 +99,7 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 								ta = ta + this.sygnalWyswietlany.getkrok() * 10;
 						}
 					}
-				} else if (this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.DYSKRETNY
+				} else if (this.sygnalWyswietlany.getRodzaj() == RodzajSygnalu.DYSKRETNY
 						&& sygnalWyswietlany.getPunktyY_wykres().size() > 0) {
 					int iloscProbek = (int) (this.sygnalWyswietlany.getPunktyY_wykres().size());
 					for (int i = 0; i < iloscProbek; i++) {
@@ -113,7 +113,7 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 				JFreeChart chart;
 
 				if ((this.sygnalWyswietlany.gettyp() != 11 && this.sygnalWyswietlany.gettyp() != 10)
-						&& (this.sygnalWyswietlany.getrodzaj() == rodzaj_sygnalu.CIAGLY)) {
+						&& (this.sygnalWyswietlany.getRodzaj() == RodzajSygnalu.CIAGLY)) {
 					chart = ChartFactory.createXYLineChart(null, null, null, dataset,
 							PlotOrientation.VERTICAL, true, true, true);
 

@@ -18,7 +18,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import syg_package01.Sygnal;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 @SuppressWarnings("serial")
 public class PanelRysunek_Konwersja extends javax.swing.JPanel {
@@ -95,7 +95,7 @@ public class PanelRysunek_Konwersja extends javax.swing.JPanel {
 				double punkt;
 				double ta = this.sygnalPodstawowy.gett1();
 
-				if (this.sygnalPodstawowy.getrodzaj() == rodzaj_sygnalu.CIAGLY
+				if (this.sygnalPodstawowy.getRodzaj() == RodzajSygnalu.CIAGLY
 						|| sygnalPodstawowy.getPunktyY_wykres().size() <= 0) {
 					punkt = this.sygnalPodstawowy.gett1();
 					while (ta <= this.sygnalPodstawowy.gett1() + this.sygnalPodstawowy.getd()) {

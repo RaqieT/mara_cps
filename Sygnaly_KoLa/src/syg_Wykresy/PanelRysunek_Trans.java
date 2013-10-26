@@ -22,7 +22,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import syg_package01.Sygnal;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 @SuppressWarnings("serial")
 public class PanelRysunek_Trans extends javax.swing.JPanel {
@@ -58,7 +58,7 @@ public class PanelRysunek_Trans extends javax.swing.JPanel {
 
 				List<Complex> fft = this.sygnal.FFT(this.sygnal.getPunktyY_probkowanie());
 				
-				if (this.sygnal.getrodzaj() == rodzaj_sygnalu.CIAGLY
+				if (this.sygnal.getRodzaj() == RodzajSygnalu.CIAGLY
 						|| sygnal.getPunktyY_wykres().size() <= 0) {
 					punkt = this.sygnal.gett1();
 					int index = 0;

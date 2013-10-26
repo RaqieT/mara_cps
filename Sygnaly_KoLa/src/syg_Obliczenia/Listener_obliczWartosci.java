@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 
 import syg_package01.PanelParametry;
 import syg_package01.Sygnal;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 public class Listener_obliczWartosci implements ActionListener {
 
@@ -28,13 +28,14 @@ public class Listener_obliczWartosci implements ActionListener {
 			String msgPoprawnosc = this.parametry.sprawdzPoprawnosc();
 			if (msgPoprawnosc == "ok") {
 				this.sygnal = this.parametry.zapiszParametryDoSygnalu();
-				if (this.sygnal.getrodzaj() != rodzaj_sygnalu.CIAGLY) {
+				if (this.sygnal.getRodzajDlaObl() == RodzajSygnalu.CIAGLY && !this.sygnal.czyOkresowy())
+				{
+					JOptionPane.showMessageDialog(null,
+					"Sygnał jest ciągły, ale nie okresowy", "Błąd",
+					JOptionPane.ERROR_MESSAGE);
+				}else{
 					this.parametry.obliczenieWarosci(sygnal);
 					this.parametry.btn_oblicz.setEnabled(false);
-				} else {
-					JOptionPane.showMessageDialog(null,
-							"Sygnał jest ciągły - należy utworzyć dyskretny.", "Błąd",
-							JOptionPane.ERROR_MESSAGE);
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, msgPoprawnosc, "Nie można obliczyć wartości",

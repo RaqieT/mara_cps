@@ -18,7 +18,7 @@ import syg_Wykresy.Listener_wyswietlHistogram;
 import syg_Wykresy.Listener_wyswietlWykres;
 import syg_Wykresy.PanelRysunek_Histogram;
 import syg_Wykresy.PanelRysunek_Wykres;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
@@ -166,23 +166,23 @@ public class PanelParametry extends PanelObslugi {
 	public void obliczenieWarosci(Sygnal _sygnal) {
 		double wartosc;
 
-		wartosc = _sygnal.obl_sredniawartosc(_sygnal.getrodzaj());
+		wartosc = _sygnal.obl_sredniawartosc(_sygnal.getRodzajDlaObl());
 		wartosc = zaokragl(wartosc, 4);
 		txt_srednia.setText(Double.toString(wartosc));
 
-		wartosc = _sygnal.obl_sredniawartoscbezwzgledna(_sygnal.getrodzaj());
+		wartosc = _sygnal.obl_sredniawartoscbezwzgledna(_sygnal.getRodzajDlaObl());
 		wartosc = zaokragl(wartosc, 4);
 		txt_sredniaBezw.setText(Double.toString(wartosc));
 
-		wartosc = _sygnal.obl_wartoscskuteczna(_sygnal.getrodzaj());
+		wartosc = _sygnal.obl_wartoscskuteczna(_sygnal.getRodzajDlaObl());
 		wartosc = zaokragl(wartosc, 4);
 		txt_wartSkuteczna.setText(Double.toString(wartosc));
 
-		wartosc = _sygnal.obl_wariancja(_sygnal.getrodzaj());
+		wartosc = _sygnal.obl_wariancja(_sygnal.getRodzajDlaObl());
 		wartosc = zaokragl(wartosc, 4);
 		txt_wariancja.setText(Double.toString(wartosc));
 
-		wartosc = _sygnal.obl_mocsrednia(_sygnal.getrodzaj());
+		wartosc = _sygnal.obl_mocsrednia(_sygnal.getRodzajDlaObl());
 		wartosc = zaokragl(wartosc, 4);
 		txt_moc.setText(Double.toString(wartosc));
 	}
@@ -191,7 +191,7 @@ public class PanelParametry extends PanelObslugi {
 		if (_id >= 0)
 			this.listaSygnaow[_id] = _sygnal;
 
-		if (_sygnal.getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+		if (_sygnal.getRodzaj() == RodzajSygnalu.CIAGLY) {
 			_sygnal.wyczyscPunkty(true);
 			// _sygnal.wyczyscPunkty(false);
 
@@ -227,7 +227,7 @@ public class PanelParametry extends PanelObslugi {
 	public Sygnal zapiszParametryDoSygnalu() {
 		int id = this.cb_wybor123.getSelectedIndex();
 
-		if (this.listaSygnaow[id].getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+		if (this.listaSygnaow[id].getRodzaj() == RodzajSygnalu.CIAGLY) {
 			double okres = Double.parseDouble(this.txt_OkresPodstawowy.getText());
 
 			if (this.cb_OkresLubCzestotliwosc.getSelectedIndex() == 1) {
@@ -295,7 +295,7 @@ public class PanelParametry extends PanelObslugi {
 	 *         </ol>
 	 */
 	public String sprawdzPoprawnosc() {
-		if (listaSygnaow[cb_wybor123.getSelectedIndex()].getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+		if (listaSygnaow[cb_wybor123.getSelectedIndex()].getRodzaj() == RodzajSygnalu.CIAGLY) {
 			if (this.txt_Amplituda.getText().isEmpty()
 					|| !this.txt_Amplituda.isValid()
 					|| this.txt_CzasPoczatkowy.getText().isEmpty()

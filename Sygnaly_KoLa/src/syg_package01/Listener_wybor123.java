@@ -6,7 +6,7 @@ import java.awt.event.ItemListener;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 public class Listener_wybor123 implements ItemListener {
 
@@ -29,7 +29,7 @@ public class Listener_wybor123 implements ItemListener {
 
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			id = cb.getSelectedIndex();
-			if (listaSygnalow[id].getrodzaj() != rodzaj_sygnalu.CIAGLY) {
+			if (listaSygnalow[id].getRodzaj() != RodzajSygnalu.CIAGLY) {
 				((PanelParametry) source).zablokujPola(true);
 				// ((PanelParametry) source).wyczyscPola();
 			} else {

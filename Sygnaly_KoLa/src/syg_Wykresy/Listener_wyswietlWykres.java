@@ -12,7 +12,7 @@ import syg_package01.PanelFiltracja;
 import syg_package01.PanelKonwersja;
 import syg_package01.PanelParametry;
 import syg_package01.Sygnal;
-import syg_package01.Sygnal.rodzaj_sygnalu;
+import syg_package01.Sygnal.RodzajSygnalu;
 
 public class Listener_wyswietlWykres implements ActionListener {
 
@@ -39,14 +39,14 @@ public class Listener_wyswietlWykres implements ActionListener {
 				this.sygnal = this.parametry.zapiszParametryDoSygnalu();
 
 				// przygotowanie tablicy punktów - wyczyszczenie sygnału
-				if (this.sygnal.getrodzaj() == rodzaj_sygnalu.CIAGLY) {
+				if (this.sygnal.getRodzaj() == RodzajSygnalu.CIAGLY) {
 					this.sygnal.wyczyscPunkty(true);
 				}
 
 				// jeśli powrót z panelu do konwersji
-				if (this.sygnal.getrodzaj() != rodzaj_sygnalu.CIAGLY
-						&& this.sygnal.getrodzaj() != rodzaj_sygnalu.DYSKRETNY) {
-					this.sygnal.setRodzaj(rodzaj_sygnalu.CIAGLY);
+				if (this.sygnal.getRodzaj() != RodzajSygnalu.CIAGLY
+						&& this.sygnal.getRodzaj() != RodzajSygnalu.DYSKRETNY) {
+					this.sygnal.setRodzaj(RodzajSygnalu.CIAGLY);
 					this.sygnal.wyczyscPunkty(true);
 				}
 
