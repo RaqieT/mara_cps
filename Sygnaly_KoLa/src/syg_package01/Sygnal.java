@@ -8,10 +8,13 @@ import java.util.Random;
 import javax.swing.JOptionPane;
 
 import syg_Obliczenia.LiczbaZespolona;
+import syg_Obliczenia.Punkt;
 import syg_Szablony.PanelObslugi.zwracana_wartosc;
 import syg_package01.Filtr.filtr_okno;
 import syg_package01.Filtr.filtr_przepustowosc;
 import org.apache.commons.math.complex.Complex;
+import org.apache.commons.math.stat.regression.OLSMultipleLinearRegression;
+import org.jfree.data.xy.XYSeries;
 
 //jfreechart
 public class Sygnal {
@@ -73,6 +76,8 @@ public class Sygnal {
 	private List<Double> punktyY_probkowanie = new ArrayList<Double>();
 	private List<Double> punktyY_kwantyzacja = new ArrayList<Double>();
 	private List<LiczbaZespolona> punktyY_zespolone = new ArrayList<LiczbaZespolona>();
+	public XYSeries punktyNaWYkresie = new XYSeries("Wykres");
+	public XYSeries punktyZrekonstruowane = new XYSeries("Rekonstrukcja");
 
 	public List<Double> getPunktyY_kwantyzacja() {
 		return punktyY_kwantyzacja;
@@ -118,6 +123,38 @@ public class Sygnal {
 		return 0.0D;
 	}
 
+	private double znajdzWartoscNaWykresie(double _x, XYSeries _punkty) {
+		int iMniejszy = 0; // indeks dla najbliższego punktu i mniejszego od _x
+		int iWiekszy = 2; // indeks dla najbliższego punktu i większego od _x
+		boolean ustawione = false;	// jeśli znaleziono tylko najbliższe argumenty a nie ten właściwy
+		for (int i = 0; i < _punkty.getItemCount(); ++i) {
+			if (_punkty.getX(i).doubleValue() == _x)
+				return _punkty.getY(i).doubleValue();
+			if (i > 0) {
+				if (_punkty.getX(i - 1).doubleValue() < _x && _punkty.getX(i).doubleValue() > _x) {
+					iMniejszy = i - 1;
+					iWiekszy = i;
+					break;
+				}
+			}
+		}
+		// jeśli nie znaleziono wartości dla podanego argumentu to obliczany z
+		// prostej pomiędzy najbliższymi punktami
+		if (_punkty.getY(iMniejszy).doubleValue() > _punkty.getY(iWiekszy).doubleValue()) // jeśli wartość przy większym czasie jest mniejsza
+		{
+			return (_punkty.getY(iWiekszy).doubleValue() + 
+					Math.abs((_punkty.getY(iMniejszy).doubleValue() - _punkty.getY(iWiekszy).doubleValue())
+							* (_punkty.getX(iWiekszy).doubleValue() - _x)
+							/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy).doubleValue())));
+		}else
+		{
+			return (_punkty.getY(iMniejszy).doubleValue() + 
+					Math.abs((_punkty.getY(iWiekszy).doubleValue() - _punkty.getY(iMniejszy).doubleValue())
+							* (_x - _punkty.getX(iMniejszy).doubleValue())
+							/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy).doubleValue())));
+		}
+	}
+
 	/**
 	 * Błąd średniokwadratowy (MSE, ang. <i>Mean Squared Error</i>)
 	 * 
@@ -125,24 +162,64 @@ public class Sygnal {
 	 * 
 	 * @return
 	 */
-	public double obl_MSE(List<Double> _doPorownania) {
+//	public double obl_MSE(List<Double> _doPorownania) {
+//		double wynik = 0;
+//		try {
+//			if (!this.getPunktyY_wykres().isEmpty() && !_doPorownania.isEmpty()) {
+//
+//				for (int i = 0; i < _doPorownania.size(); i++) {
+//					wynik += (this.getPunktyY_wykres().get(i) - _doPorownania.get(i))
+//							* (this.getPunktyY_wykres().get(i) - _doPorownania.get(i));
+//				}
+//
+//				wynik = (1.0D / _doPorownania.size()) * wynik;
+//
+//			} else {
+//				if (this.getPunktyY_wykres().isEmpty())
+//					JOptionPane.showMessageDialog(null, "Brak sygnału.", "Błąd",
+//							JOptionPane.ERROR_MESSAGE);
+//				else if (_doPorownania.isEmpty())
+//					JOptionPane.showMessageDialog(null, "Brak konwersji sygnału.", "Błąd",
+//							JOptionPane.ERROR_MESSAGE);
+//
+//			}
+//		} catch (Exception exc_MSE) {
+//			JOptionPane.showMessageDialog(null, "Nie można obliczyć:\n" + exc_MSE.getMessage(),
+//					"Błąd", JOptionPane.ERROR_MESSAGE);
+//		}
+//		return wynik;
+//	}
+
+	/**
+	 * Błąd średniokwadratowy (MSE, ang. <i>Mean Squared Error</i>)<br>
+	 * obliczany na podstawie wartości w punktyNaWYkresie i
+	 * punktyZrekonstruowane (jeśli nie można znaleźć wartości dla argumentu - szuka po prostej)
+	 * 
+	 * @return
+	 */
+	public double obl_MSE() {
 		double wynik = 0;
 		try {
-			if (!this.getPunktyY_wykres().isEmpty() && !_doPorownania.isEmpty()) {
+			if (!punktyNaWYkresie.isEmpty() && !punktyZrekonstruowane.isEmpty()) {
 
-				for (int i = 0; i < _doPorownania.size(); i++) {
-					wynik = wynik + (this.getPunktyY_wykres().get(i) - _doPorownania.get(i))
-							* (this.getPunktyY_wykres().get(i) - _doPorownania.get(i));
+				double i = this.t1;
+				int iloscPunktow = 0;
+				while (i < this.t1 + this.d) {
+					wynik += Math.pow(
+							(this.znajdzWartoscNaWykresie(i, this.punktyNaWYkresie) - this
+									.znajdzWartoscNaWykresie(i, this.punktyZrekonstruowane)), 2);
+					i += this.kroczek;
+					++iloscPunktow;
 				}
 
-				wynik = (1.0D / _doPorownania.size()) * wynik;
+				wynik = (1.0D / iloscPunktow) * wynik;
 
 			} else {
-				if (this.getPunktyY_wykres().isEmpty())
+				if (this.punktyNaWYkresie.isEmpty())
 					JOptionPane.showMessageDialog(null, "Brak sygnału.", "Błąd",
 							JOptionPane.ERROR_MESSAGE);
-				else if (_doPorownania.isEmpty())
-					JOptionPane.showMessageDialog(null, "Brak konwersji sygnału.", "Błąd",
+				else if (punktyZrekonstruowane.isEmpty())
+					JOptionPane.showMessageDialog(null, "Brak rekonstrukcji sygnału.", "Błąd",
 							JOptionPane.ERROR_MESSAGE);
 
 			}
@@ -158,33 +235,81 @@ public class Sygnal {
 	 * 
 	 * @return
 	 */
-	public double obl_SNR(List<Double> _doPorownania) {
+//	public double obl_SNR(List<Double> _doPorownania) {
+//		double wynik = 0;
+//		try {
+//			if (!this.getPunktyY_wykres().isEmpty() && !_doPorownania.isEmpty()) {
+//
+//				double licznik = 0, mianownik = 0;
+//
+//				for (int i = 0; i < _doPorownania.size(); i++) {
+//					licznik += (this.getPunktyY_wykres().get(i) * this.getPunktyY_wykres().get(i));
+//				}
+//
+//				for (int i = 0; i < _doPorownania.size(); i++) {
+//					mianownik += ((this.getPunktyY_wykres().get(i) - _doPorownania.get(i)) * (this
+//							.getPunktyY_wykres().get(i) - _doPorownania.get(i)));
+//				}
+//
+//				if (mianownik != 0) {
+//					wynik = licznik / mianownik;
+//					wynik = 10.0D * Math.log10(wynik);
+//				} else {
+//					wynik = 0;
+//				}
+//
+//			} else {
+//				if (this.getPunktyY_wykres().isEmpty())
+//					JOptionPane.showMessageDialog(null, "Brak sygnału.", "Błąd",
+//							JOptionPane.ERROR_MESSAGE);
+//				else if (_doPorownania.isEmpty())
+//					JOptionPane.showMessageDialog(null, "Brak konwersji sygnału.", "Błąd",
+//							JOptionPane.ERROR_MESSAGE);
+//
+//			}
+//		} catch (Exception exc_MSE) {
+//			JOptionPane.showMessageDialog(null, "Nie można obliczyć:\n" + exc_MSE.getMessage(),
+//					"Błąd", JOptionPane.ERROR_MESSAGE);
+//			wynik = -1;
+//		}
+//		return wynik;
+//	}
+	/**
+	 * Stosunek sygnał - szum (SNR, ang. <i>Signal to Noise Ratio</i>)
+	 */
+	public double obl_SNR() {
 		double wynik = 0;
 		try {
-			if (!this.getPunktyY_wykres().isEmpty() && !_doPorownania.isEmpty()) {
+			if (!this.punktyNaWYkresie.isEmpty() && !this.punktyZrekonstruowane.isEmpty()) {
 
 				double licznik = 0, mianownik = 0;
+				double i = this.t1;
+				int iloscPunktow = 0;
 
-				for (int i = 0; i < _doPorownania.size(); i++) {
-					licznik = licznik
-							+ (this.getPunktyY_wykres().get(i) * this.getPunktyY_wykres().get(i));
+				while (i < this.t1 + this.d) {
+					licznik += Math.pow((this.znajdzWartoscNaWykresie(i, punktyNaWYkresie)), 2);
+					++iloscPunktow;
 				}
 
-				for (int i = 0; i < _doPorownania.size(); i++) {
-					mianownik = mianownik
-							+ (this.getPunktyY_wykres().get(i) - _doPorownania.get(i))
-							* (this.getPunktyY_wykres().get(i) - _doPorownania.get(i));
+				i = this.t1;
+				while (i < this.t1 + this.d) {
+					mianownik += Math.pow(((this.znajdzWartoscNaWykresie(i, punktyNaWYkresie)) 
+							- (this.znajdzWartoscNaWykresie(i, punktyZrekonstruowane))), 2);
 				}
 
-				wynik = licznik / mianownik;
-				wynik = 10.0D * Math.log10(wynik);
+				if (mianownik != 0) {
+					wynik = licznik / mianownik;
+					wynik = 10.0D * Math.log10(wynik);
+				} else {
+					wynik = 0;
+				}
 
 			} else {
-				if (this.getPunktyY_wykres().isEmpty())
+				if (this.punktyNaWYkresie.isEmpty())
 					JOptionPane.showMessageDialog(null, "Brak sygnału.", "Błąd",
 							JOptionPane.ERROR_MESSAGE);
-				else if (_doPorownania.isEmpty())
-					JOptionPane.showMessageDialog(null, "Brak konwersji sygnału.", "Błąd",
+				else if (punktyZrekonstruowane.isEmpty())
+					JOptionPane.showMessageDialog(null, "Brak rekonstrukcji sygnału.", "Błąd",
 							JOptionPane.ERROR_MESSAGE);
 
 			}
@@ -215,8 +340,11 @@ public class Sygnal {
 				}
 
 				mianownik = this.obl_MSE(_doPorownania);
-				wynik = licznik / mianownik;
-				wynik = 10.0D * Math.log10(wynik);
+				if (mianownik != 0) {
+					wynik = licznik / mianownik;
+					wynik = 10.0D * Math.log10(wynik);
+				} else
+					wynik = 0;
 
 			} else {
 				if (this.getPunktyY_wykres().isEmpty())
@@ -234,6 +362,13 @@ public class Sygnal {
 		return wynik;
 	}
 
+	private double wartBezwzgl(double _liczba) {
+		if (_liczba < 0)
+			return -_liczba;
+		else
+			return _liczba;
+	}
+
 	/**
 	 * Maksymalna różnica (MD, ang. <i>Maximum Difference</i>)
 	 * 
@@ -245,13 +380,23 @@ public class Sygnal {
 			if (!this.getPunktyY_wykres().isEmpty() && !_doPorownania.isEmpty()) {
 
 				double tmp;
-				wynik = Math.abs(this.getPunktyY_wykres().get(0) - _doPorownania.get(0));
+				int iMax = 0;
+				wynik = wartBezwzgl(this.getPunktyY_wykres().get(1) - _doPorownania.get(1));
 
-				for (int i = 1; i < _doPorownania.size(); i++) {
-					tmp = Math.abs(this.getPunktyY_wykres().get(i) - _doPorownania.get(i));
-					if (wynik < tmp)
+				for (int i = 1; i < _doPorownania.size(); ++i) {
+					tmp = this.wartBezwzgl(this.getPunktyY_wykres().get(i) - _doPorownania.get(i));
+
+					if (wynik < tmp) {
 						wynik = tmp;
+						iMax = i;
+					}
 				}
+				System.out.println("lp     x      y");
+				System.out.println("1     " + (this.gett1() + iMax * this.kroczek) + "      "
+						+ this.getPunktyY_wykres().get(iMax) + " [" + iMax + "]");
+				System.out.println("2     " + (this.gett1() + iMax * this.kroczek) + "      "
+						+ _doPorownania.get(iMax));
+				System.out.println(obl_zaokr(wynik));
 
 			} else {
 				if (this.getPunktyY_wykres().isEmpty())
@@ -300,6 +445,7 @@ public class Sygnal {
 
 		return s;
 	}
+
 	private double obl_calkaAbs(double _xp, double _xk, double _n) {
 		double dx = 0; // odległość między dwoma sąsiednimi punktami
 						// podziałowymi
@@ -403,18 +549,21 @@ public class Sygnal {
 
 	/**
 	 * miejsca po przecinku
+	 * 
 	 * @param _liczba
 	 * @param _miejscPoPrzec
 	 * @return
 	 */
 	private double obl_zaokr(double _liczba, int _miejscPoPrzec) {
-		_liczba *= (10*_miejscPoPrzec);
+		_liczba *= (10 * _miejscPoPrzec);
 		_liczba = Math.round(_liczba) * 1.0;
-		_liczba /= (10*_miejscPoPrzec);
+		_liczba /= (10 * _miejscPoPrzec);
 		return _liczba;
 	}
+
 	/**
 	 * Domyślne zaokrąglenie: 3 miejsca po przecinku
+	 * 
 	 * @param _liczba
 	 * @return
 	 */

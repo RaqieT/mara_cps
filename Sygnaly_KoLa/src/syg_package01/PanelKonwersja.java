@@ -300,7 +300,8 @@ public class PanelKonwersja extends PanelObslugi {
 			break;
 		}
 		case 1: {
-			wynik = this.sygnalKonwertowany.obl_MSE(_doPorownania);
+			//wynik = this.sygnalKonwertowany.obl_MSE(_doPorownania);
+			wynik = this.sygnalKonwertowany.obl_MSE();
 			break;
 		}
 		case 2: {

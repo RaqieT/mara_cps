@@ -51,8 +51,8 @@ public class PanelRysunek_Konwersja extends javax.swing.JPanel {
 		this.nrPrzeksztalcenia = nrPrzeksztalcenia;
 	}
 
-	XYSeries series_0 = new XYSeries("Sygnał podstawowy");
-	XYSeries series_s1 = new XYSeries("Próbki");
+	XYSeries series_0 = new XYSeries("Sygnał pierwotny");
+	XYSeries series_s1 = new XYSeries("Próbki lub sygnał zrekonstruowany");
 	XYSeries series_q2 = new XYSeries("Kwantyzacja równomierna z zaokrąglaniem");
 	XYSeries series_r2 = new XYSeries("Interpolacja pierwszego rzędu");
 	XYSeries series_r3 = new XYSeries("Rekonstrukcja w oparciu o funkcję sinc");
@@ -160,6 +160,8 @@ public class PanelRysunek_Konwersja extends javax.swing.JPanel {
 				// chartpanel = new ChartPanel(chart);
 
 				// this.add(chartpanel);
+				
+				this.sygnalPodstawowy.punktyZrekonstruowane = series_q2;
 
 			} else if (this.nrPrzeksztalcenia == 2) {
 				// interpolacja R2
@@ -179,6 +181,8 @@ public class PanelRysunek_Konwersja extends javax.swing.JPanel {
 				chartpanel = new ChartPanel(chart);
 				chartpanel.setDomainZoomable(true);
 				this.add(chartpanel);
+				
+				this.sygnalPodstawowy.punktyZrekonstruowane = series_s1;
 
 			} else if (this.nrPrzeksztalcenia == 3) {
 				// Rekonstrukcja w oparciu o funkcję sinc - R3
@@ -217,6 +221,8 @@ public class PanelRysunek_Konwersja extends javax.swing.JPanel {
 				chartpanel = new ChartPanel(chart);
 				chartpanel.setDomainZoomable(true);
 				this.add(chartpanel);
+				
+				this.sygnalPodstawowy.punktyZrekonstruowane = series_r3;
 			}
 		}
 	}
