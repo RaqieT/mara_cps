@@ -53,6 +53,8 @@ public class Akcja_zapisz {
 			_xstream.omitField(Sygnal.class, "punktyY_probkowanie");
 			_xstream.omitField(Sygnal.class, "punktyY_kwantyzacja");
 			_xstream.omitField(Sygnal.class, "punktyY_zespolone");
+			_xstream.omitField(Sygnal.class, "punktyNaWYkresie");
+			_xstream.omitField(Sygnal.class, "punktyZrekonstruowane");
 			_xstream.omitField(Sygnal.class, "poziom_kwantyzacji_krok");
 			_xstream.omitField(Sygnal.class, "poziomy_kwantyzacji");
 			if (this.sygnal.gettyp() != 9 || this.sygnal.gettyp() != 10) {
@@ -73,6 +75,8 @@ public class Akcja_zapisz {
 			_xstream.omitField(Sygnal.class, "poziom_kwantyzacji_krok");
 			_xstream.omitField(Sygnal.class, "poziomy_kwantyzacji");
 			_xstream.omitField(Sygnal.class, "punktyY_zespolone");
+			_xstream.omitField(Sygnal.class, "punktyNaWYkresie");
+			_xstream.omitField(Sygnal.class, "punktyZrekonstruowane");
 			if (this.sygnal.gettyp() != 9 || this.sygnal.gettyp() != 10) {
 				_xstream.omitField(Sygnal.class, "skok");
 			}
@@ -93,6 +97,8 @@ public class Akcja_zapisz {
 			_xstream.omitField(Sygnal.class, "poziom_kwantyzacji_krok");
 			_xstream.omitField(Sygnal.class, "poziomy_kwantyzacji");
 			_xstream.omitField(Sygnal.class, "punktyY_wykres");
+			_xstream.omitField(Sygnal.class, "punktyNaWYkresie");
+			_xstream.omitField(Sygnal.class, "punktyZrekonstruowane");
 			if (this.sygnal.gettyp() != 9 || this.sygnal.gettyp() != 10) {
 				_xstream.omitField(Sygnal.class, "skok");
 			}
