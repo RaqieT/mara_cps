@@ -204,7 +204,7 @@ public class Sygnal {
 
 				double i = this.t1;
 				int iloscPunktow = 0;
-				while (i < this.t1 + this.d) {
+				while (i < this.t1 + this.d - this.kroczek) {
 					wynik += Math.pow(
 							(this.znajdzWartoscNaWykresie(i, this.punktyNaWYkresie) - this
 									.znajdzWartoscNaWykresie(i, this.punktyZrekonstruowane)), 2);
@@ -232,50 +232,6 @@ public class Sygnal {
 
 	/**
 	 * Stosunek sygnał - szum (SNR, ang. <i>Signal to Noise Ratio</i>)
-	 * 
-	 * @return
-	 */
-//	public double obl_SNR(List<Double> _doPorownania) {
-//		double wynik = 0;
-//		try {
-//			if (!this.getPunktyY_wykres().isEmpty() && !_doPorownania.isEmpty()) {
-//
-//				double licznik = 0, mianownik = 0;
-//
-//				for (int i = 0; i < _doPorownania.size(); i++) {
-//					licznik += (this.getPunktyY_wykres().get(i) * this.getPunktyY_wykres().get(i));
-//				}
-//
-//				for (int i = 0; i < _doPorownania.size(); i++) {
-//					mianownik += ((this.getPunktyY_wykres().get(i) - _doPorownania.get(i)) * (this
-//							.getPunktyY_wykres().get(i) - _doPorownania.get(i)));
-//				}
-//
-//				if (mianownik != 0) {
-//					wynik = licznik / mianownik;
-//					wynik = 10.0D * Math.log10(wynik);
-//				} else {
-//					wynik = 0;
-//				}
-//
-//			} else {
-//				if (this.getPunktyY_wykres().isEmpty())
-//					JOptionPane.showMessageDialog(null, "Brak sygnału.", "Błąd",
-//							JOptionPane.ERROR_MESSAGE);
-//				else if (_doPorownania.isEmpty())
-//					JOptionPane.showMessageDialog(null, "Brak konwersji sygnału.", "Błąd",
-//							JOptionPane.ERROR_MESSAGE);
-//
-//			}
-//		} catch (Exception exc_MSE) {
-//			JOptionPane.showMessageDialog(null, "Nie można obliczyć:\n" + exc_MSE.getMessage(),
-//					"Błąd", JOptionPane.ERROR_MESSAGE);
-//			wynik = -1;
-//		}
-//		return wynik;
-//	}
-	/**
-	 * Stosunek sygnał - szum (SNR, ang. <i>Signal to Noise Ratio</i>)
 	 */
 	public double obl_SNR() {
 		double wynik = 0;
@@ -286,15 +242,17 @@ public class Sygnal {
 				double i = this.t1;
 				int iloscPunktow = 0;
 
-				while (i < this.t1 + this.d) {
+				while (i < this.t1 + this.d - this.kroczek) {
 					licznik += Math.pow((this.znajdzWartoscNaWykresie(i, punktyNaWYkresie)), 2);
+					i += this.kroczek;
 					++iloscPunktow;
 				}
 
 				i = this.t1;
-				while (i < this.t1 + this.d) {
+				while (i < this.t1 + this.d - this.kroczek) {
 					mianownik += Math.pow(((this.znajdzWartoscNaWykresie(i, punktyNaWYkresie)) 
 							- (this.znajdzWartoscNaWykresie(i, punktyZrekonstruowane))), 2);
+					i += this.kroczek;
 				}
 
 				if (mianownik != 0) {
@@ -324,22 +282,15 @@ public class Sygnal {
 	/**
 	 * Szczytowy stosunek sygnał - szum (PSNR, ang. <i>Peak Signal to Noise
 	 * Ratio</i>)
-	 * 
-	 * @return
 	 */
-	public double obl_PSNR(List<Double> _doPorownania) {
+	public double obl_PSNR() {
 		double wynik = 0;
 		try {
-			if (!this.getPunktyY_wykres().isEmpty() && !_doPorownania.isEmpty()) {
+			if (!this.punktyNaWYkresie.isEmpty() && !punktyZrekonstruowane.isEmpty()) {
 
-				double licznik = this.getPunktyY_wykres().get(0), mianownik = 0;
+				double licznik = this.punktyNaWYkresie.getMaxY(), mianownik = 0;
 
-				for (int i = 1; i < _doPorownania.size(); i++) {
-					if (licznik < this.getPunktyY_wykres().get(i))
-						licznik = this.getPunktyY_wykres().get(i);
-				}
-
-				mianownik = this.obl_MSE(_doPorownania);
+				mianownik = this.obl_MSE();
 				if (mianownik != 0) {
 					wynik = licznik / mianownik;
 					wynik = 10.0D * Math.log10(wynik);
@@ -347,10 +298,10 @@ public class Sygnal {
 					wynik = 0;
 
 			} else {
-				if (this.getPunktyY_wykres().isEmpty())
+				if (this.punktyNaWYkresie.isEmpty())
 					JOptionPane.showMessageDialog(null, "Brak sygnału.", "Błąd",
 							JOptionPane.ERROR_MESSAGE);
-				else if (_doPorownania.isEmpty())
+				else if (punktyZrekonstruowane.isEmpty())
 					JOptionPane.showMessageDialog(null, "Brak zapisanej konwersji sygnału.",
 							"Błąd", JOptionPane.ERROR_MESSAGE);
 
@@ -362,48 +313,47 @@ public class Sygnal {
 		return wynik;
 	}
 
-	private double wartBezwzgl(double _liczba) {
-		if (_liczba < 0)
-			return -_liczba;
-		else
-			return _liczba;
-	}
-
 	/**
 	 * Maksymalna różnica (MD, ang. <i>Maximum Difference</i>)
-	 * 
 	 * @return
 	 */
-	public double obl_MD(List<Double> _doPorownania) {
+	public double obl_MD() {
 		double wynik = 0;
 		try {
-			if (!this.getPunktyY_wykres().isEmpty() && !_doPorownania.isEmpty()) {
+			if (!this.punktyNaWYkresie.isEmpty() && !punktyZrekonstruowane.isEmpty()) {
 
 				double tmp;
-				int iMax = 0;
-				wynik = wartBezwzgl(this.getPunktyY_wykres().get(1) - _doPorownania.get(1));
+				double t = this.t1, tMax = t;
+				int maxPunkt = 0, i = 0;
+				
+				wynik = Math.abs(this.znajdzWartoscNaWykresie(t, punktyNaWYkresie) - this.znajdzWartoscNaWykresie(t, punktyZrekonstruowane));
 
-				for (int i = 1; i < _doPorownania.size(); ++i) {
-					tmp = this.wartBezwzgl(this.getPunktyY_wykres().get(i) - _doPorownania.get(i));
+				while (t < this.t1 + this.d - this.kroczek) {
+					t += this.kroczek;
+					tmp = Math.abs(this.znajdzWartoscNaWykresie(t, punktyNaWYkresie) - this.znajdzWartoscNaWykresie(t, punktyZrekonstruowane));
 
 					if (wynik < tmp) {
 						wynik = tmp;
-						iMax = i;
+						maxPunkt = i;
+						tMax = t;
 					}
+					++i;
 				}
-				System.out.println("lp     x      y");
-				System.out.println("1     " + (this.gett1() + iMax * this.kroczek) + "      "
-						+ this.getPunktyY_wykres().get(iMax) + " [" + iMax + "]");
-				System.out.println("2     " + (this.gett1() + iMax * this.kroczek) + "      "
-						+ _doPorownania.get(iMax));
-				System.out.println(obl_zaokr(wynik));
+				
+//				System.out.println("lp     x      y");
+//				System.out.println("1     " + tMax + "      "
+//						+ this.znajdzWartoscNaWykresie(tMax, punktyNaWYkresie) + " [" + maxPunkt + "]");
+//				System.out.println("2     " + tMax + "      "
+//						+ this.znajdzWartoscNaWykresie(tMax, punktyZrekonstruowane));
+//				System.out.println(obl_zaokr(wynik));
+
 
 			} else {
-				if (this.getPunktyY_wykres().isEmpty())
+				if (this.punktyNaWYkresie.isEmpty())
 					JOptionPane.showMessageDialog(null, "Brak sygnału.", "Błąd",
 							JOptionPane.ERROR_MESSAGE);
-				else if (_doPorownania.isEmpty())
-					JOptionPane.showMessageDialog(null, "Brak konwersji sygnału.", "Błąd",
+				else if (punktyZrekonstruowane.isEmpty())
+					JOptionPane.showMessageDialog(null, "Brak rekonstrukcji sygnału.", "Błąd",
 							JOptionPane.ERROR_MESSAGE);
 
 			}

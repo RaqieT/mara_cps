@@ -305,15 +305,15 @@ public class PanelKonwersja extends PanelObslugi {
 			break;
 		}
 		case 2: {
-			wynik = this.sygnalKonwertowany.obl_SNR(_doPorownania);
+			wynik = this.sygnalKonwertowany.obl_SNR();
 			break;
 		}
 		case 3: {
-			wynik = this.sygnalKonwertowany.obl_PSNR(_doPorownania);
+			wynik = this.sygnalKonwertowany.obl_PSNR();
 			break;
 		}
 		case 4: {
-			wynik = this.sygnalKonwertowany.obl_MD(_doPorownania);
+			wynik = this.sygnalKonwertowany.obl_MD();
 			break;
 		}
 		default:
