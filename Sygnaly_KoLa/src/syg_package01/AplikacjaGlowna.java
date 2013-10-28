@@ -24,6 +24,7 @@ import javax.swing.JTabbedPane;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
+import org.jfree.data.xy.XYSeries;
 
 import syg_Pliki.Akcja_otworz;
 import syg_Pliki.Akcja_zapisz;
@@ -465,7 +466,8 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 	}
 
 	/**
-	 * Sprawdzanie czy można wykonać operacje na dwóch sygnałach (tylko dyskretne)
+	 * Sprawdzanie czy można wykonać operacje na dwóch sygnałach (tylko
+	 * dyskretne)
 	 * 
 	 * @param _sygnalA
 	 *            : Sygnal
@@ -488,40 +490,37 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 		}
 		return msg;
 	}
-	
+
 	/**
 	 * Wykonanie wybranej operacji (tylko na sygnałach dyskretnych).
-	 * @param _znakOperacji +, -, *, /
+	 * 
+	 * @param _znakOperacji
+	 *            +, -, *, /
 	 */
-	private void syg_WykonajOperacje (char _znakOperacji)
-	{
+	private void syg_WykonajOperacje(char _znakOperacji) {
 		// pobranie drugiego sygnału z pliku
 		Akcja_otworz otwarcie = null;
 		switch (_znakOperacji) {
 		case '+':
-			otwarcie = new Akcja_otworz(this.listaSygnalow[1],
-					syg_MenuGlowne_Operacje_Dodaj);
+			otwarcie = new Akcja_otworz(this.listaSygnalow[1], syg_MenuGlowne_Operacje_Dodaj);
 			break;
 		case '-':
-			otwarcie = new Akcja_otworz(this.listaSygnalow[1],
-					syg_MenuGlowne_Operacje_Odejmij);
+			otwarcie = new Akcja_otworz(this.listaSygnalow[1], syg_MenuGlowne_Operacje_Odejmij);
 			break;
 		case '*':
-			otwarcie = new Akcja_otworz(this.listaSygnalow[1],
-					syg_MenuGlowne_Operacje_Pomnoz);
+			otwarcie = new Akcja_otworz(this.listaSygnalow[1], syg_MenuGlowne_Operacje_Pomnoz);
 			break;
 		case '/':
-			otwarcie = new Akcja_otworz(this.listaSygnalow[1],
-					syg_MenuGlowne_Operacje_Podziel);
+			otwarcie = new Akcja_otworz(this.listaSygnalow[1], syg_MenuGlowne_Operacje_Podziel);
 			break;
 		}
-		
+
 		listaSygnalow[1] = otwarcie.getSygnal();
 		String msgPoprawnosc = this.sprawdzPoprawnoscOperacji(listaSygnalow[0], listaSygnalow[1]);
 
 		if (msgPoprawnosc == "ok") {
 			int iloscProbek = 0;
-			// pobranie mniejszej ilości próbek
+			// wybranie mniejszej ilości próbek
 			if (listaSygnalow[1].getPunktyY_wykres().size() > listaSygnalow[0].getPunktyY_wykres()
 					.size())
 				iloscProbek = listaSygnalow[0].getPunktyY_wykres().size();
@@ -545,52 +544,43 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 				amp = listaSygnalow[0].getA() * listaSygnalow[1].getA();
 				break;
 			case '/':
-				amp = listaSygnalow[0].getA() / (listaSygnalow[1].getA() != 0.0 ? listaSygnalow[1].getA() : 0.0000001);
+				amp = listaSygnalow[0].getA()
+						/ (listaSygnalow[1].getA() != 0.0 ? listaSygnalow[1].getA() : 0.0000001);
 				break;
 			}
-			listaSygnalow[2].pobierzParametryUzytkownika(listaSygnalow[0].gettyp(),
-					(amp), listaSygnalow[0].gett1(),
-					listaSygnalow[0].getts(), listaSygnalow[0].getd(), // d
+			listaSygnalow[2].pobierzParametryUzytkownika(listaSygnalow[0].gettyp(), (amp),
+					listaSygnalow[0].gett1(), listaSygnalow[0].getts(), listaSygnalow[0].getd(), // d
 					listaSygnalow[0].getT(), listaSygnalow[0].getKw(), listaSygnalow[0].getskok());
 			listaSygnalow[2].setkrok(listaSygnalow[0].getkrok());
 
 			// operacja
-			switch(_znakOperacji)
-			{
-				case '+':
-				{
-					for (int i = 0; i < iloscProbek; i++) {
-						listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
-								+ listaSygnalow[1].getPunktzindexu(i));
-					}
+			double t = listaSygnalow[2].gett1(), y = 0;
+			listaSygnalow[2].punktyNaWYkresie = new XYSeries("Wynik działania");
+			for (int i = 0; i < iloscProbek; i++) {
+				switch (_znakOperacji) {
+				case '+': {
+					y = (listaSygnalow[0].getPunktzindexu(i) + listaSygnalow[1].getPunktzindexu(i));
 					break;
 				}
-				case '-':
-				{
-					for (int i = 0; i < iloscProbek; i++) {
-						listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
-								- listaSygnalow[1].getPunktzindexu(i));
-					}
+				case '-': {
+					y = (listaSygnalow[0].getPunktzindexu(i) - listaSygnalow[1].getPunktzindexu(i));
 					break;
 				}
-				case '*':
-				{
-					for (int i = 0; i < iloscProbek; i++) {
-						listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
-								* listaSygnalow[1].getPunktzindexu(i));
-					}
+				case '*': {
+					y = (listaSygnalow[0].getPunktzindexu(i) * listaSygnalow[1].getPunktzindexu(i));
 					break;
 				}
-				case '/':
-				{
-					for (int i = 0; i < iloscProbek; i++) {
-						listaSygnalow[2].setPunktyY_wykres(listaSygnalow[0].getPunktzindexu(i)
-								/ listaSygnalow[1].getPunktzindexu(i));
-					}
+				case '/': {
+					y = (listaSygnalow[0].getPunktzindexu(i) / listaSygnalow[1].getPunktzindexu(i));
 					break;
 				}
+				}
+
+				listaSygnalow[2].setPunktyY_wykres(y);
+				listaSygnalow[2].punktyNaWYkresie.add(t, y);
+				t += listaSygnalow[2].getkrok();
 			}
-			
+
 			// zablokowanie nieedytowalnych wartości i odblokowanie innych
 			syg_panelParametry.cb_wybor123.setEnabled(true);
 			this.syg_MenuGlowne_Operacje.setEnabled(false);
@@ -638,7 +628,7 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 					"Parametry sygnału, operacje, wykres/histogram, odczyt/zapis",
 					"Próbkowanie, kwantyzacja, interpolacja, rekonstrukcja",
 					"Splot, filtracja i korelacja",
-					"Przekształcenie Fouriera, Walsha-Hadamarda, kosinusowe i falkowe, szybkie algorytmy"};
+					"Przekształcenie Fouriera, Walsha-Hadamarda, kosinusowe i falkowe, szybkie algorytmy" };
 
 			listaSygnalow = new Sygnal[3];
 			listaSygnalow[0] = new Sygnal();
@@ -869,7 +859,7 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 			syg_Tab1.addTab(this.listaNazw_Tab[2], syg_panelFiltracja);
 			syg_Tab1.setTabComponentAt(2, lblTab3);
 			syg_Tab1.setToolTipTextAt(2, this.listaToolTips_Tab[2]);
-			
+
 			JLabel lblTab4 = new JLabel(this.listaNazw_Tab[3]);
 			syg_Tab1.addTab(this.listaNazw_Tab[3], syg_panelTransformacja);
 			syg_Tab1.setTabComponentAt(3, lblTab4);
