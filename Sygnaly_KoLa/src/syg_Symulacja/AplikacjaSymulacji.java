@@ -56,6 +56,8 @@ public class AplikacjaSymulacji extends JFrame {
 	private JButton btn_nawigacja;
 	private JFormattedTextField txt_obiekt;
 	private JFormattedTextField txt_czujnik;
+	public UrzadzenieSprawdzajace radar;
+	public ObiektWRuchu obiekt;
 
 	public String getProperty(String _propertyName) {
 
@@ -194,6 +196,10 @@ public class AplikacjaSymulacji extends JFrame {
 						0, 0));
 				btn_nawigacja.setName("lbl_czujnik" + nrTxt);
 				btn_nawigacja.setText(labels_nawigacja[nrTxt]);
+				if (nrTxt == 0)
+				{
+					btn_nawigacja.addActionListener(new Listener_SymRozpocznij(this, btn_nawigacja));
+				}
 			}
 		}
 
@@ -205,5 +211,4 @@ public class AplikacjaSymulacji extends JFrame {
 	// launch(AplikacjaGlowna.class, args);
 	//
 	// }
-
 }

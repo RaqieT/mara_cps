@@ -131,7 +131,7 @@ public class Sygnal {
 	 * @param _punkty
 	 * @return
 	 */
-	private double znajdzWartoscNaWykresie(double _x, XYSeries _punkty) {
+	public double znajdzWartoscNaWykresie(double _x, XYSeries _punkty) {
 		int iMniejszy = 0; // indeks dla najbliższego punktu i mniejszego od _x
 		int iWiekszy = 2; // indeks dla najbliższego punktu i większego od _x
 		for (int i = 0; i < _punkty.getItemCount(); ++i) {

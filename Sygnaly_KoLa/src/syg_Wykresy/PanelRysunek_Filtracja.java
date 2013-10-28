@@ -195,6 +195,8 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 						czas += this.getSygnaly()[0].getkrok();
 					}
 				}
+
+				this.getSygnaly()[0].punktyZrekonstruowane = _series;
 			}
 		}
 	}
