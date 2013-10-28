@@ -180,7 +180,7 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 					indexR = 0;
 				}
 
-				for (int i = 0; i < ileIndeksow; i++) {
+				for (int i = 0; i < ileIndeksow; ++i) {
 					// korelacja
 					_series.add(
 							czas,

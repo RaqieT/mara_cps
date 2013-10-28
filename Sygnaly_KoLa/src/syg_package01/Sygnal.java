@@ -998,16 +998,20 @@ public class Sygnal {
 	}
 
 	/**
-	 * Wyczyszczenie tablicy wartości.
+	 * Wyczyszczenie tablicy wartości i punktów.
+	 * @param _wykresu - czy usunąć punkty dla rysowania wykresu
 	 */
 	public void wyczyscPunkty(boolean _wykresu) {
 		if (_wykresu) {
 			this.getPunktyY_wykres().clear();
 			this.getPunktyY_probkowanie().clear();
 			this.getPunktyY_kwantyzacja().clear();
+			this.punktyNaWYkresie.clear();
+			this.punktyZrekonstruowane.clear();
 		} else {
 			this.getPunktyY_probkowanie().clear();
 			this.getPunktyY_kwantyzacja().clear();
+			this.punktyZrekonstruowane.clear();
 		}
 	}
 
@@ -1119,7 +1123,7 @@ public class Sygnal {
 		double w_n = 1.0D; // okno
 		double s_n = 1.0D; // przepustowość
 		double h_n = 0.0D; // wynik
-		double pom1 = (M - 1) / 2; // zmienna pomocnicza
+		int pom1 = (M - 1) / 2; // zmienna pomocnicza
 
 		// okno
 		if (_filtr.getOkno() == filtr_okno.PROSTOKATNE) {
@@ -1140,7 +1144,7 @@ public class Sygnal {
 			if (_n == pom1)
 				h_n = 2.0D / K;
 			else
-				h_n = (Math.sin(2.0D * Math.PI * (_n - pom1) / K)) / (Math.PI * (_n - pom1));
+				h_n = (Math.sin(2.0D * Math.PI * (_n - pom1) / K)) / (double)(Math.PI * (double)(_n - pom1));
 		} else {
 			h_n = _sygnal.getPunktzindexu(_n);
 		}
@@ -1164,7 +1168,7 @@ public class Sygnal {
 		int M = _filtr.getLiczbaWspolczynnikow();// _t;//this.getPunktyY_wykres().size();
 		int pom = 0;
 
-		for (int k = 0; k < M; k++) {
+		for (int k = 0; k < M; ++k) {
 			pom = _t - k;
 			if (pom >= 0 && pom < this.punktyY_wykres.size())
 				y_t = y_t
@@ -1192,12 +1196,11 @@ public class Sygnal {
 		int pom = 0;
 		double h_k = 0.0;
 
-		for (int k = 0; k < M; k++) {
-			h_k = _sygnal2.getPunktzindexu(k);
+		for (int k = 0; k < M; ++k) {
+			pom = _n - k;
 			if (_ktoraOpcja == 0) {
-				pom = _n - k;
+				h_k = _sygnal2.getPunktzindexu(k);
 			} else {
-				pom = _n - k;
 				h_k = this.odpowiedzImpulsowa(k, _filtr, true, _sygnal2);
 			}
 			if (pom >= 0 && pom < this.punktyY_wykres.size())
