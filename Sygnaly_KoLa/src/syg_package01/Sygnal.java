@@ -123,10 +123,17 @@ public class Sygnal {
 		return 0.0D;
 	}
 
+	/**
+	 * Szukanie wartości dla danego czasu. Jeśli nie ma wartości w danym punkcie
+	 * to brana wartość po prostej z nalbliższych punktów.
+	 * 
+	 * @param _x
+	 * @param _punkty
+	 * @return
+	 */
 	private double znajdzWartoscNaWykresie(double _x, XYSeries _punkty) {
 		int iMniejszy = 0; // indeks dla najbliższego punktu i mniejszego od _x
 		int iWiekszy = 2; // indeks dla najbliższego punktu i większego od _x
-		boolean ustawione = false;	// jeśli znaleziono tylko najbliższe argumenty a nie ten właściwy
 		for (int i = 0; i < _punkty.getItemCount(); ++i) {
 			if (_punkty.getX(i).doubleValue() == _x)
 				return _punkty.getY(i).doubleValue();
@@ -140,60 +147,35 @@ public class Sygnal {
 		}
 		// jeśli nie znaleziono wartości dla podanego argumentu to obliczany z
 		// prostej pomiędzy najbliższymi punktami
-		if (_punkty.getY(iMniejszy).doubleValue() > _punkty.getY(iWiekszy).doubleValue()) // jeśli wartość przy większym czasie jest mniejsza
+		if (_punkty.getY(iMniejszy).doubleValue() > _punkty.getY(iWiekszy).doubleValue()) // jeśli
+																							// wartość
+																							// przy
+																							// większym
+																							// czasie
+																							// jest
+																							// mniejsza
 		{
-			return (_punkty.getY(iWiekszy).doubleValue() + 
-					Math.abs((_punkty.getY(iMniejszy).doubleValue() - _punkty.getY(iWiekszy).doubleValue())
+			return (_punkty.getY(iWiekszy).doubleValue() + Math
+					.abs((_punkty.getY(iMniejszy).doubleValue() - _punkty.getY(iWiekszy)
+							.doubleValue())
 							* (_punkty.getX(iWiekszy).doubleValue() - _x)
-							/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy).doubleValue())));
-		}else
-		{
-			return (_punkty.getY(iMniejszy).doubleValue() + 
-					Math.abs((_punkty.getY(iWiekszy).doubleValue() - _punkty.getY(iMniejszy).doubleValue())
+							/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy)
+									.doubleValue())));
+		} else {
+			return (_punkty.getY(iMniejszy).doubleValue() + Math
+					.abs((_punkty.getY(iWiekszy).doubleValue() - _punkty.getY(iMniejszy)
+							.doubleValue())
 							* (_x - _punkty.getX(iMniejszy).doubleValue())
-							/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy).doubleValue())));
+							/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy)
+									.doubleValue())));
 		}
 	}
 
 	/**
-	 * Błąd średniokwadratowy (MSE, ang. <i>Mean Squared Error</i>)
-	 * 
-	 * @param _doPorownania
-	 * 
-	 * @return
-	 */
-//	public double obl_MSE(List<Double> _doPorownania) {
-//		double wynik = 0;
-//		try {
-//			if (!this.getPunktyY_wykres().isEmpty() && !_doPorownania.isEmpty()) {
-//
-//				for (int i = 0; i < _doPorownania.size(); i++) {
-//					wynik += (this.getPunktyY_wykres().get(i) - _doPorownania.get(i))
-//							* (this.getPunktyY_wykres().get(i) - _doPorownania.get(i));
-//				}
-//
-//				wynik = (1.0D / _doPorownania.size()) * wynik;
-//
-//			} else {
-//				if (this.getPunktyY_wykres().isEmpty())
-//					JOptionPane.showMessageDialog(null, "Brak sygnału.", "Błąd",
-//							JOptionPane.ERROR_MESSAGE);
-//				else if (_doPorownania.isEmpty())
-//					JOptionPane.showMessageDialog(null, "Brak konwersji sygnału.", "Błąd",
-//							JOptionPane.ERROR_MESSAGE);
-//
-//			}
-//		} catch (Exception exc_MSE) {
-//			JOptionPane.showMessageDialog(null, "Nie można obliczyć:\n" + exc_MSE.getMessage(),
-//					"Błąd", JOptionPane.ERROR_MESSAGE);
-//		}
-//		return wynik;
-//	}
-
-	/**
 	 * Błąd średniokwadratowy (MSE, ang. <i>Mean Squared Error</i>)<br>
 	 * obliczany na podstawie wartości w punktyNaWYkresie i
-	 * punktyZrekonstruowane (jeśli nie można znaleźć wartości dla argumentu - szuka po prostej)
+	 * punktyZrekonstruowane (jeśli nie można znaleźć wartości dla argumentu -
+	 * szuka po prostej)
 	 * 
 	 * @return
 	 */
@@ -250,8 +232,9 @@ public class Sygnal {
 
 				i = this.t1;
 				while (i < this.t1 + this.d - this.kroczek) {
-					mianownik += Math.pow(((this.znajdzWartoscNaWykresie(i, punktyNaWYkresie)) 
-							- (this.znajdzWartoscNaWykresie(i, punktyZrekonstruowane))), 2);
+					mianownik += Math.pow(
+							((this.znajdzWartoscNaWykresie(i, punktyNaWYkresie)) - (this
+									.znajdzWartoscNaWykresie(i, punktyZrekonstruowane))), 2);
 					i += this.kroczek;
 				}
 
@@ -315,6 +298,7 @@ public class Sygnal {
 
 	/**
 	 * Maksymalna różnica (MD, ang. <i>Maximum Difference</i>)
+	 * 
 	 * @return
 	 */
 	public double obl_MD() {
@@ -325,12 +309,14 @@ public class Sygnal {
 				double tmp;
 				double t = this.t1, tMax = t;
 				int maxPunkt = 0, i = 0;
-				
-				wynik = Math.abs(this.znajdzWartoscNaWykresie(t, punktyNaWYkresie) - this.znajdzWartoscNaWykresie(t, punktyZrekonstruowane));
+
+				wynik = Math.abs(this.znajdzWartoscNaWykresie(t, punktyNaWYkresie)
+						- this.znajdzWartoscNaWykresie(t, punktyZrekonstruowane));
 
 				while (t < this.t1 + this.d - this.kroczek) {
 					t += this.kroczek;
-					tmp = Math.abs(this.znajdzWartoscNaWykresie(t, punktyNaWYkresie) - this.znajdzWartoscNaWykresie(t, punktyZrekonstruowane));
+					tmp = Math.abs(this.znajdzWartoscNaWykresie(t, punktyNaWYkresie)
+							- this.znajdzWartoscNaWykresie(t, punktyZrekonstruowane));
 
 					if (wynik < tmp) {
 						wynik = tmp;
@@ -339,14 +325,14 @@ public class Sygnal {
 					}
 					++i;
 				}
-				
-//				System.out.println("lp     x      y");
-//				System.out.println("1     " + tMax + "      "
-//						+ this.znajdzWartoscNaWykresie(tMax, punktyNaWYkresie) + " [" + maxPunkt + "]");
-//				System.out.println("2     " + tMax + "      "
-//						+ this.znajdzWartoscNaWykresie(tMax, punktyZrekonstruowane));
-//				System.out.println(obl_zaokr(wynik));
 
+				// System.out.println("lp     x      y");
+				// System.out.println("1     " + tMax + "      "
+				// + this.znajdzWartoscNaWykresie(tMax, punktyNaWYkresie) + " ["
+				// + maxPunkt + "]");
+				// System.out.println("2     " + tMax + "      "
+				// + this.znajdzWartoscNaWykresie(tMax, punktyZrekonstruowane));
+				// System.out.println(obl_zaokr(wynik));
 
 			} else {
 				if (this.punktyNaWYkresie.isEmpty())
@@ -364,94 +350,48 @@ public class Sygnal {
 		return wynik;
 	}
 
+	private enum OBL_TYPCALKI {
+		/**
+		 * Całka z x(t)
+		 */
+		OBL_CALKA_ZWYKLA,
+		/**
+		 * Całka z x^2(t)
+		 */
+		OBL_CALKA_KWADRAT,
+		/**
+		 * Całka z |x(t)|
+		 */
+		OBL_CALKA_ABS,
+		/**
+		 * Całka z (x(t) + wartosc)^2
+		 */
+		OBL_CALKA_KWADRAT_POWIEKSZENIE
+	}
+
+	private double obl_calka(double _xp, double _xk, double _n, OBL_TYPCALKI _typ) {
+		return obl_calka(_xp, _xk, _n, _typ, 0);
+	}
+
 	/**
 	 * Obliczenie całki<br>
 	 * <a href="http://edu.i-lo.tarnow.pl/inf/alg/004_int/0003.php">Źródło</a>
 	 * 
 	 * @param _xp
-	 *            - początek przedziało całkowania
+	 *            - początek przedziału całkowania
 	 * @param _xk
 	 *            - koniec przedziału całkowania
 	 * @param _n
 	 *            - liczba punktów podziałowych
 	 * @param _typ
-	 * @return
-	 */
-	private double obl_calka(double _xp, double _xk, double _n) {
-		double dx = 0; // odległość między dwoma sąsiednimi punktami
-						// podziałowymi
-		double s = 0; // wynik
-		int i = 0; // licznik
-
-		if (_n <= 0)
-			_n = 10;
-
-		dx = (_xk - _xp) / _n;
-
-		while (++i < _n) {
-			s += wykres_punkty(s, _xp + (i * dx));
-		}
-		s = (s + (wykres_punkty(s, _xp) + wykres_punkty(s, _xk)) * 0.5) * dx;
-
-		return s;
-	}
-
-	private double obl_calkaAbs(double _xp, double _xk, double _n) {
-		double dx = 0; // odległość między dwoma sąsiednimi punktami
-						// podziałowymi
-		double s = 0; // wynik
-		int i = 0; // licznik
-
-		if (_n <= 0)
-			_n = 10;
-
-		dx = (_xk - _xp) / _n;
-
-		while (++i < _n) {
-			s += Math.abs(wykres_punkty(s, _xp + (i * dx)));
-		}
-		s = (s + (wykres_punkty(s, _xp) + wykres_punkty(s, _xk)) * 0.5) * dx;
-
-		return s;
-	}
-
-	/**
-	 * Całka z x^2(t)
-	 * 
-	 * @param _xp
-	 * @param _xk
-	 * @param _n
-	 * @return
-	 */
-	private double obl_calkaKw(double _xp, double _xk, double _n) {
-		double dx = 0; // odległość między dwoma sąsiednimi punktami
-						// podziałowymi
-		double s = 0; // wynik
-		int i = 0; // licznik
-
-		if (_n <= 0)
-			_n = 10;
-
-		dx = (_xk - _xp) / _n;
-
-		while (++i < _n) {
-			s += Math.pow((wykres_punkty(s, _xp + (i * dx))), 2);
-		}
-		s = (s + (wykres_punkty(s, _xp) + wykres_punkty(s, _xk)) * 0.5) * dx;
-
-		return s;
-	}
-
-	/**
-	 * Całka z (x(t) + wartosc)^2
-	 * 
-	 * @param _xp
-	 * @param _xk
-	 * @param _n
+	 *            - typ obliczenia całki: OBL_TYPCALKI
 	 * @param _wartoscDodawana
+	 *            - wartość dodawana przy obliczaniu całki typu:
+	 *            OBL_CALKA_KWADRAT_POWIEKSZENIE
 	 * @return
 	 */
-	private double obl_calkaKwMinSr(double _xp, double _xk, double _n, double _wartoscDodawana) {
+	private double obl_calka(double _xp, double _xk, double _n, OBL_TYPCALKI _typ,
+			double _wartoscDodawana) {
 		double dx = 0; // odległość między dwoma sąsiednimi punktami
 						// podziałowymi
 		double s = 0; // wynik
@@ -463,7 +403,24 @@ public class Sygnal {
 		dx = (_xk - _xp) / _n;
 
 		while (++i < _n) {
-			s += Math.pow((wykres_punkty(s, _xp + (i * dx)) + _wartoscDodawana), 2);
+			switch (_typ) {
+			case OBL_CALKA_ZWYKLA: {
+				s += wykres_punkty(s, _xp + (i * dx));
+				break;
+			}
+			case OBL_CALKA_ABS: {
+				s += Math.abs(wykres_punkty(s, _xp + (i * dx)));
+				break;
+			}
+			case OBL_CALKA_KWADRAT: {
+				s += Math.pow((wykres_punkty(s, _xp + (i * dx))), 2);
+				break;
+			}
+			case OBL_CALKA_KWADRAT_POWIEKSZENIE: {
+				s += Math.pow((wykres_punkty(s, _xp + (i * dx)) + _wartoscDodawana), 2);
+				break;
+			}
+			}
 		}
 		s = (s + (wykres_punkty(s, _xp) + wykres_punkty(s, _xk)) * 0.5) * dx;
 
@@ -490,7 +447,8 @@ public class Sygnal {
 		} else {
 			if (this.d >= this.T) {
 				double t2 = this.t1 + (Math.floor(this.d / this.T)) * this.T;
-				srednia = (this.obl_calka(this.t1, t2, this.d / this.kroczek)) / (t2 - this.t1);
+				srednia = (this.obl_calka(this.t1, t2, this.d / this.kroczek,
+						OBL_TYPCALKI.OBL_CALKA_ZWYKLA)) / (t2 - this.t1);
 			}
 		}
 
@@ -535,8 +493,10 @@ public class Sygnal {
 		} else {
 			if (this.d >= this.T) {
 				double t2 = this.t1 + (Math.floor(this.d / this.T)) * this.T;
-				srednia = 1.0 / (t2 - this.t1)
-						* (this.obl_calkaAbs(this.t1, t2, this.d / this.kroczek));
+				srednia = 1.0
+						/ (t2 - this.t1)
+						* (this.obl_calka(this.t1, t2, this.d / this.kroczek,
+								OBL_TYPCALKI.OBL_CALKA_ABS));
 			}
 		}
 
@@ -555,7 +515,10 @@ public class Sygnal {
 		} else {
 			if (this.d >= this.T) {
 				double t2 = this.t1 + (Math.floor(this.d / this.T)) * this.T;
-				moc = 1.0 / (t2 - this.t1) * (this.obl_calkaKw(this.t1, t2, this.d / this.kroczek));
+				moc = 1.0
+						/ (t2 - this.t1)
+						* (this.obl_calka(this.t1, t2, this.d / this.kroczek,
+								OBL_TYPCALKI.OBL_CALKA_KWADRAT));
 			}
 		}
 		return obl_zaokr(moc);
@@ -607,7 +570,8 @@ public class Sygnal {
 				double t2 = this.t1 + (Math.floor(this.d / this.T)) * this.T;
 				wariancja = 1.0
 						/ (t2 - this.t1)
-						* (this.obl_calkaKwMinSr(this.t1, t2, this.d / this.kroczek,
+						* (this.obl_calka(this.t1, t2, this.d / this.kroczek,
+								OBL_TYPCALKI.OBL_CALKA_KWADRAT_POWIEKSZENIE,
 								-this.obl_sredniawartosc(_rodzaj)));
 			}
 		}
