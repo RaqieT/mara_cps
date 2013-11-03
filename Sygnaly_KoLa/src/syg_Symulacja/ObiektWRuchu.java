@@ -1,6 +1,7 @@
 package syg_Symulacja;
 
 public class ObiektWRuchu {
-	double polozenie;
-	double predkoscPoruszania;
+	public double polozenie;
+	public double predkoscPoruszania;
+	public int opoznienieProbek;
 }

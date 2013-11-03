@@ -44,6 +44,34 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 	public PanelRysunek_Filtracja() {
 	}
 
+	/**
+	 * 
+	 * @param _sygnaly
+	 * @param _filtr
+	 * @param _ktoraOpcja
+	 * @param _czyRysowac
+	 *            - czy utworzyć wykres (jeśli nie to oblicznia w: obliczPunkty)
+	 */
+	public PanelRysunek_Filtracja(Sygnal[] _sygnaly, Filtr _filtr, int _ktoraOpcja,
+			boolean _czyRysowac) {
+		super();
+		this.setSygnal(_sygnaly);
+		this.setFiltr(_filtr);
+		this.ktoraOpcja = _ktoraOpcja;
+		if (_czyRysowac)
+			initGUI();
+	}
+
+	/**
+	 * 
+	 * @param _sygnaly
+	 * @param _filtr
+	 * @param _ktoraOpcja
+	 * <br>
+	 *            0 - ...<br>
+	 *            1 -
+	 * 
+	 */
 	public PanelRysunek_Filtracja(Sygnal[] _sygnaly, Filtr _filtr, int _ktoraOpcja) {
 		super();
 		this.setSygnal(_sygnaly);
@@ -127,14 +155,17 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 	}
 
 	/**
-	 * Obliczenie punktów wykresu na podstawie filtra i dla danego sygnału.
+	 * Obliczenie punktów wykresu na podstawie filtra i dla danego sygnału.<br>
+	 * znane: <i>filtr</i> (jeśli <i>któraOpcja</i> = 0 to <i>filtr</i> nie
+	 * potrzebny), <i>któraOpcja</i>
 	 * 
-	 * @param series22
+	 * @param series
 	 * 
 	 * @param series2
 	 */
-	private void obliczPunkty(XYSeries _series, XYSeries _series2) {
-		double czas = this.getSygnal().gett1() + this.filtr.getLiczbaWspolczynnikow() * this.getSygnal().gett1();
+	public void obliczPunkty(XYSeries _series, XYSeries _series2) {
+		double czas = this.getSygnal().gett1() + (this.filtr != null ? this.filtr.getLiczbaWspolczynnikow()
+				* this.getSygnal().gett1() : 0.0D);
 
 		if (this.sygnaly.length == 1) {
 			// int ileIndeksow = this.getSygnal().getPunktyY_wykres().size()
@@ -145,7 +176,7 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 
 			for (int i = this.filtr.getLiczbaWspolczynnikow(); i < ileIndeksow; i++) {
 				_series.add(czas, this.getSygnal().splot(i, this.filtr));
-				
+
 				if (this.getSygnal().getRodzaj() == RodzajSygnalu.CIAGLY) {
 					czas += this.getSygnal().getkroczek();
 				} else {

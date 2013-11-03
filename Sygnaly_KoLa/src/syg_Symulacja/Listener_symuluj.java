@@ -19,8 +19,9 @@ public class Listener_symuluj implements ActionListener {
 		// TODO Auto-generated method stub
 
 		if (this.source.getClass() == PanelFiltracja.class) {
-			AplikacjaSymulacji appSymulacja = new AplikacjaSymulacji();
+			AplikacjaSymulacji appSymulacja = new AplikacjaSymulacji((PanelFiltracja)this.source);
 			appSymulacja.startup();
+			//appSymulacja.setSygnalNadawany(((PanelFiltracja)this.source).getSygnalFiltrowany());
 		}
 	}
 

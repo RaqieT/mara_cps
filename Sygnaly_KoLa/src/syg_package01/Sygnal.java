@@ -14,6 +14,7 @@ import syg_package01.Filtr.filtr_okno;
 import syg_package01.Filtr.filtr_przepustowosc;
 import org.apache.commons.math.complex.Complex;
 import org.apache.commons.math.stat.regression.OLSMultipleLinearRegression;
+import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 
 //jfreechart
@@ -122,6 +123,23 @@ public class Sygnal {
 	public double konwersja_probkowanie(double _t) {
 		return 0.0D;
 	}
+	
+	public void kopiuj (Sygnal _sygnalKopiowany)
+	{
+		this.A = _sygnalKopiowany.getA();
+		this.d = _sygnalKopiowany.getd();
+		this.kroczek = _sygnalKopiowany.getkroczek();
+		this.krok = _sygnalKopiowany.getkrok();
+		this.punktyNaWYkresie = new XYSeries(_sygnalKopiowany.punktyNaWYkresie.getKey());
+		for (int i = 0; i < _sygnalKopiowany.punktyNaWYkresie.getItemCount(); ++i)
+		{
+			this.punktyNaWYkresie.add(new XYDataItem(_sygnalKopiowany.punktyNaWYkresie.getX(i).doubleValue(), _sygnalKopiowany.punktyNaWYkresie.getY(i).doubleValue()));
+		}
+		this.rodzaj = _sygnalKopiowany.rodzaj;
+		this.T = _sygnalKopiowany.getT();
+		this.t1 = _sygnalKopiowany.gett1();
+		this.typ = _sygnalKopiowany.gettyp();
+	}
 
 	/**
 	 * Szukanie wartości dla danego czasu. Jeśli nie ma wartości w danym punkcie
@@ -132,42 +150,52 @@ public class Sygnal {
 	 * @return
 	 */
 	public double znajdzWartoscNaWykresie(double _x, XYSeries _punkty) {
-		int iMniejszy = 0; // indeks dla najbliższego punktu i mniejszego od _x
-		int iWiekszy = 2; // indeks dla najbliższego punktu i większego od _x
-		for (int i = 0; i < _punkty.getItemCount(); ++i) {
-			if (_punkty.getX(i).doubleValue() == _x)
-				return _punkty.getY(i).doubleValue();
-			if (i > 0) {
-				if (_punkty.getX(i - 1).doubleValue() < _x && _punkty.getX(i).doubleValue() > _x) {
-					iMniejszy = i - 1;
-					iWiekszy = i;
-					break;
+		if (_punkty != null && _punkty.getItemCount() > 0) {
+			int iMniejszy = 0; // indeks dla najbliższego punktu i mniejszego od
+								// _x
+			int iWiekszy = 2; // indeks dla najbliższego punktu i większego od
+								// _x
+			for (int i = 0; i < _punkty.getItemCount(); ++i) {
+				if (_punkty.getX(i).doubleValue() == _x)
+					return _punkty.getY(i).doubleValue();
+				if (i > 0) {
+					if (_punkty.getX(i - 1).doubleValue() < _x
+							&& _punkty.getX(i).doubleValue() > _x) {
+						iMniejszy = i - 1;
+						iWiekszy = i;
+						break;
+					}
 				}
 			}
-		}
-		// jeśli nie znaleziono wartości dla podanego argumentu to obliczany z
-		// prostej pomiędzy najbliższymi punktami
-		if (_punkty.getY(iMniejszy).doubleValue() > _punkty.getY(iWiekszy).doubleValue()) // jeśli
-																							// wartość
-																							// przy
-																							// większym
-																							// czasie
-																							// jest
-																							// mniejsza
+			if (_punkty.getItemCount() < 2)
+				return _punkty.getY(0).doubleValue();
+			// jeśli nie znaleziono wartości dla podanego argumentu to obliczany
+			// z
+			// prostej pomiędzy najbliższymi punktami
+			if (_punkty.getY(iMniejszy).doubleValue() > _punkty.getY(iWiekszy).doubleValue()) // jeśli
+																								// wartość
+																								// przy
+																								// większym
+																								// czasie
+																								// jest
+																								// mniejsza
+			{
+				return (_punkty.getY(iWiekszy).doubleValue() + Math.abs((_punkty.getY(iMniejszy)
+						.doubleValue() - _punkty.getY(iWiekszy).doubleValue())
+						* (_punkty.getX(iWiekszy).doubleValue() - _x)
+						/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy)
+								.doubleValue())));
+			} else {
+				return (_punkty.getY(iMniejszy).doubleValue() + Math.abs((_punkty.getY(iWiekszy)
+						.doubleValue() - _punkty.getY(iMniejszy).doubleValue())
+						* (_x - _punkty.getX(iMniejszy).doubleValue())
+						/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy)
+								.doubleValue())));
+			}
+		}else
 		{
-			return (_punkty.getY(iWiekszy).doubleValue() + Math
-					.abs((_punkty.getY(iMniejszy).doubleValue() - _punkty.getY(iWiekszy)
-							.doubleValue())
-							* (_punkty.getX(iWiekszy).doubleValue() - _x)
-							/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy)
-									.doubleValue())));
-		} else {
-			return (_punkty.getY(iMniejszy).doubleValue() + Math
-					.abs((_punkty.getY(iWiekszy).doubleValue() - _punkty.getY(iMniejszy)
-							.doubleValue())
-							* (_x - _punkty.getX(iMniejszy).doubleValue())
-							/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy)
-									.doubleValue())));
+			System.out.println("Brak danych o wartościach próbek w: Sygnal:znajdzWartoscNaWykresie");
+			return 0.0D;
 		}
 	}
 
@@ -682,7 +710,9 @@ public class Sygnal {
 	 * @return
 	 */
 	public double getkroczek() {
-		if (this.gettyp() == 10) {
+		if (this.getRodzaj() == RodzajSygnalu.DYSKRETNY) {
+			this.kroczek = this.krok;
+		} else if (this.gettyp() == 10) {
 			this.kroczek = (this.getskok() - this.gett1())
 					/ (Math.floor(100.0 * (this.getskok() - this.gett1()) / this.getd()) * 1.0);
 		} else if (this.gettyp() == 11) {
@@ -999,7 +1029,9 @@ public class Sygnal {
 
 	/**
 	 * Wyczyszczenie tablicy wartości i punktów.
-	 * @param _wykresu - czy usunąć punkty dla rysowania wykresu
+	 * 
+	 * @param _wykresu
+	 *            - czy usunąć punkty dla rysowania wykresu
 	 */
 	public void wyczyscPunkty(boolean _wykresu) {
 		if (_wykresu) {
@@ -1144,7 +1176,8 @@ public class Sygnal {
 			if (_n == pom1)
 				h_n = 2.0D / K;
 			else
-				h_n = (Math.sin(2.0D * Math.PI * (_n - pom1) / K)) / (double)(Math.PI * (double)(_n - pom1));
+				h_n = (Math.sin(2.0D * Math.PI * (_n - pom1) / K))
+						/ (double) (Math.PI * (double) (_n - pom1));
 		} else {
 			h_n = _sygnal.getPunktzindexu(_n);
 		}

@@ -23,6 +23,8 @@ import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
 import syg_package01.AplikacjaGlowna;
+import syg_package01.PanelFiltracja;
+import syg_package01.Sygnal;
 
 import examples.StatusBar;
 
@@ -58,6 +60,30 @@ public class AplikacjaSymulacji extends JFrame {
 	private JFormattedTextField txt_czujnik;
 	public UrzadzenieSprawdzajace radar;
 	public ObiektWRuchu obiekt;
+	public PanelFiltracja zrodlo;
+
+	public AplikacjaSymulacji(PanelFiltracja _source) {
+		this.zrodlo = _source;
+	}
+
+	public ObiektWRuchu getObiekt() {
+		if (this.obiekt == null) {
+			this.obiekt = new ObiektWRuchu();
+		}
+		this.obiekt.opoznienieProbek = Integer.parseInt(""
+				+ ((JFormattedTextField) this.opcje_Obiekt.getComponent(1)).getValue());
+		return obiekt;
+	}
+
+	public void setObiekt(ObiektWRuchu obiekt) {
+		this.obiekt = obiekt;
+	}
+
+	public double getJednostkaCzasowa() {
+		System.out.println(((JFormattedTextField) this.opcje_Obiekt.getComponent(1)).getValue());
+		return Double.parseDouble(""
+				+ ((JFormattedTextField) this.opcje_Obiekt.getComponent(1)).getValue());
+	}
 
 	public String getProperty(String _propertyName) {
 
@@ -69,7 +95,7 @@ public class AplikacjaSymulacji extends JFrame {
 
 		return sym_properties.getProperty(_propertyName);
 	}
-	
+
 	public void setProperty(String _propertyName, String _propertyValue) {
 
 		try {
@@ -106,11 +132,20 @@ public class AplikacjaSymulacji extends JFrame {
 		return _tf;
 	}
 
+	public Nadajnik pobierzDaneOdUzytkownika(Nadajnik _nadajnik) {
+		if (_nadajnik != null) {
+			return _nadajnik;
+		} else {
+			System.out.println("Brak nadajnika w: AplikacjaSymulacji:pobierzDaneOdUzytkownika");
+			return null;
+		}
+	}
+
 	protected void startup() {
 
 		String[] labels_grupyOpcji = new String[] { "OBIEKT", "CZUJNIK", "NAWIGACJA" };
 		String[] labels_obiekt = new String[] { "<html>Jednostka<br>czasowa<br>symulatora</html>",
-				"<html>Prędkość<br>obiektu</html>",
+				"<html>Prędkość<br>obiektu<br>(opóźnienie odbioru)</html>",
 				"<html>Prędkość<br>sygnału<br>w ośrodku</html>",
 				"<html><b>Obliczona<br>chwilowa<br>odległość</b></html>" };
 		String[] labels_czujnik = new String[] { "<html>Okres<br>sygnału</html>",
@@ -156,7 +191,8 @@ public class AplikacjaSymulacji extends JFrame {
 				{
 					txt_obiekt = ustawTextField(opcje_Obiekt, txt_obiekt, nrTxt,
 							GridBagConstraints.WEST, false);
-					if (nrTxt == 3) txt_obiekt.setEnabled(false);
+					if (nrTxt == 3)
+						txt_obiekt.setEnabled(false);
 				}
 			}
 		}
@@ -192,13 +228,13 @@ public class AplikacjaSymulacji extends JFrame {
 			for (nrTxt = 0; nrTxt < 4; ++nrTxt) {
 				btn_nawigacja = new JButton();
 				opcje_Nawigacja.add(btn_nawigacja, new GridBagConstraints(nrTxt, 0, 1, 1, 0.0, 0.0,
-						GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5, 5),
-						0, 0));
+						GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5,
+								5), 0, 0));
 				btn_nawigacja.setName("lbl_czujnik" + nrTxt);
 				btn_nawigacja.setText(labels_nawigacja[nrTxt]);
-				if (nrTxt == 0)
-				{
-					btn_nawigacja.addActionListener(new Listener_SymRozpocznij(this, btn_nawigacja));
+				if (nrTxt == 0) {
+					btn_nawigacja
+							.addActionListener(new Listener_SymRozpocznij(this, btn_nawigacja));
 				}
 			}
 		}
@@ -206,9 +242,23 @@ public class AplikacjaSymulacji extends JFrame {
 		Application.getInstance().getContext().getResourceMap(getClass())
 				.injectComponents(getContentPane());
 	}
+
 	//
 	// public static void main(String[] args) {
 	// launch(AplikacjaGlowna.class, args);
 	//
 	// }
+
+	public void setSygnalNadawany(Sygnal _sygnalDoKorelacji) {
+		if (_sygnalDoKorelacji != null) {
+			if (this.radar == null)
+				this.radar = new UrzadzenieSprawdzajace();
+			if (this.radar.nadajnik == null)
+				this.radar.nadajnik = new Nadajnik(_sygnalDoKorelacji,
+						_sygnalDoKorelacji.getkroczek(), this.getJednostkaCzasowa(), false);
+		} else {
+			System.out
+					.println("Nie można pobrać sygnału do korelacji w: AplikacjaSymulacji:setSygnalNadawany");
+		}
+	}
 }
