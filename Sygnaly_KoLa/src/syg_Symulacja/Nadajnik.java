@@ -1,5 +1,6 @@
 package syg_Symulacja;
 
+import java.sql.Time;
 import java.util.Date;
 
 import org.jfree.data.xy.XYSeries;
@@ -46,8 +47,8 @@ public class Nadajnik {
 	 * @param _czyStart
 	 *            - czy ustawić znacznik czasu
 	 */
-	public Nadajnik(Sygnal _sygnalNadawany, double _czasPomiedzyProbkami, double _jednostkaCzasowa,
-			boolean _czyStart) {
+	public Nadajnik(Sygnal _sygnalNadawany, double _czasPomiedzyProbkami, int _buforProbek,
+			double _jednostkaCzasowa, boolean _czyStart) {
 		this.sygnalNadawany = new Sygnal();
 		this.sygnalNadawany.kopiuj(_sygnalNadawany);
 		if (_czyStart)
@@ -56,7 +57,10 @@ public class Nadajnik {
 			this.czasPomiedzyProbkami = _czasPomiedzyProbkami;
 		else
 			this.czasPomiedzyProbkami = this.sygnalNadawany.getkroczek();
-		this.buforProbek = (int) (_sygnalNadawany.getd() / _sygnalNadawany.getkroczek());
+		if (_buforProbek <= 0)
+			this.buforProbek = (int) (_sygnalNadawany.getd() / _sygnalNadawany.getkroczek());
+		else
+			this.buforProbek = _buforProbek;
 		this.jednostkaCzasowa = _jednostkaCzasowa;
 	}
 
@@ -65,6 +69,7 @@ public class Nadajnik {
 	 */
 	public void generujPoczatek() {
 		this.czasWypuszczeniaSygnalu = new Date();
+		this.zapisanySygnalNadany = new Sygnal();
 	}
 
 	/**
@@ -124,6 +129,9 @@ public class Nadajnik {
 			this.zapisanySygnalNadany.punktyNaWYkresie.add(_czasAktualny,
 					this.podajWartoscProbki(_czasAktualny));
 		}
+
+//		System.out.print("Nadanie [" + this.zapisanySygnalNadany.punktyNaWYkresie.getItemCount()
+//				+ "]: " + _czasAktualny + " : " + this.podajWartoscProbki(_czasAktualny));
 	}
 
 	private boolean czyMoznaZapisac(double _czasAktualny) {
@@ -151,5 +159,9 @@ public class Nadajnik {
 		// znalezienie wartości w znanym czasie trwania znanego sygnału
 		return this.sygnalNadawany.znajdzWartoscNaWykresie(szukanyCzas,
 				this.sygnalNadawany.punktyNaWYkresie);
+	}
+
+	public void wyzeruj() {
+		this.zapisanySygnalNadany = new Sygnal();
 	}
 }

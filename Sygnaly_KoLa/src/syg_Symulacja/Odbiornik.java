@@ -63,6 +63,7 @@ public class Odbiornik {
 		}
 		//zapis próbki
 		this.sygnalOdebrany.punktyNaWYkresie.add(_czasOdebrania, _wartoscProbki);
+//		System.out.print(" | Odbiór [" + this.sygnalOdebrany.punktyNaWYkresie.getItemCount() + "]: " + _czasOdebrania + " : " + _wartoscProbki);
 		++this.aktualnaProbkaPoKorelacji;
 	}
 	public void wyzerujPoKorelacji()
@@ -72,5 +73,10 @@ public class Odbiornik {
 	public boolean moznaKorelowac()
 	{
 		return this.aktualnaProbkaPoKorelacji >= this.buforProbek;
+	}
+
+	public void wyzeruj() {
+		this.aktualnaProbkaPoKorelacji = 0;
+		this.sygnalOdebrany = new Sygnal();
 	}
 }

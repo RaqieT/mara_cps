@@ -25,7 +25,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 @SuppressWarnings("serial")
 public abstract class PanelObslugi extends javax.swing.JPanel {
 	protected GridBagLayout thisLayout;
-	protected JSplitPane splitPane;
+	public JSplitPane splitPane;
 	protected Dimension szerokosc_cb;
 	protected JSeparator separator;
 

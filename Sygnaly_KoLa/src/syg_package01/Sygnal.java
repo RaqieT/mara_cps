@@ -1048,8 +1048,24 @@ public class Sygnal {
 	}
 
 	public void setPunktyY_wykres(double _punktyY_wykres) {
+		if (this.punktyY_wykres == null) this.punktyY_wykres = new ArrayList<Double>();
 		this.punktyY_wykres.add(_punktyY_wykres);
 	}
+	public void setPunktyY_wykres(List<Double> _punktyY_wykres) {
+		if (this.punktyY_wykres == null) this.punktyY_wykres = new ArrayList<Double>();
+		this.punktyY_wykres.addAll(_punktyY_wykres);
+	}
+	/**
+	 * ustawia wartości dla <i>punktyY_wykres</i> z <i>_punktyNaWYkresie</i>
+	 * @param _punktyNaWYkresie
+	 */
+	public void setPunktyY_wykres(XYSeries _punktyNaWYkresie) {
+		if (this.punktyY_wykres == null) this.punktyY_wykres = new ArrayList<Double>();
+		for (int i = 0; i < _punktyNaWYkresie.getItemCount(); ++i) {
+			this.punktyY_wykres.add(_punktyNaWYkresie.getY(i).doubleValue());
+		}
+	}
+
 
 	public List<Double> getPunktyY_wykres() {
 		return punktyY_wykres;
@@ -1224,6 +1240,7 @@ public class Sygnal {
 	 * @return
 	 */
 	public double korelacja(int _n, Filtr _filtr, Sygnal _sygnal2, int _ktoraOpcja) {
+		
 		int M = _sygnal2.getPunktyY_wykres().size();
 		double R_n = 0.0D;
 		int pom = 0;

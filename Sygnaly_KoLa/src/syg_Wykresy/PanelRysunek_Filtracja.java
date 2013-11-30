@@ -3,6 +3,7 @@ package syg_Wykresy;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -164,8 +165,39 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 	 * @param series2
 	 */
 	public void obliczPunkty(XYSeries _series, XYSeries _series2) {
-		double czas = this.getSygnal().gett1() + (this.filtr != null ? this.filtr.getLiczbaWspolczynnikow()
-				* this.getSygnal().gett1() : 0.0D);
+		boolean skopiowany = false, skopiowany2 = false;
+		if (sygnaly[0].getPunktyY_wykres() == null || sygnaly[0].getPunktyY_wykres().size() <= 0)
+		{
+			sygnaly[0].setPunktyY_wykres(sygnaly[0].punktyNaWYkresie);
+			skopiowany = true;
+		}
+		if (sygnaly[1].getPunktyY_wykres() == null || sygnaly[1].getPunktyY_wykres().size() <= 0)
+		{
+			sygnaly[1].setPunktyY_wykres(sygnaly[1].punktyNaWYkresie);
+			skopiowany2 = true;
+		}
+		
+		double czas = this.getSygnal().gett1()
+				+ (this.filtr != null ? this.filtr.getLiczbaWspolczynnikow()
+						* this.getSygnal().gett1() : 0.0D);
+
+		// if (_series != null && _series.getItemCount() > 0
+		// && _series2 != null && _series2.getItemCount() > 0
+		// && this.sygnaly.length > 1
+		// && (this.sygnaly[0].getPunktyY_wykres() == null
+		// || (this.sygnaly[0].getPunktyY_wykres() == null &&
+		// this.sygnaly[0].getPunktyY_wykres().size() <= 0)
+		// )
+		// && (this.sygnaly[1].getPunktyY_wykres() == null
+		// || (this.sygnaly[1].getPunktyY_wykres() == null &&
+		// this.sygnaly[1].getPunktyY_wykres().size() <= 0)
+		// ))
+		// {
+		// for (int i = 0; i < _series.getItemCount(); ++i)
+		// {
+		// this.syg
+		// }
+		// }
 
 		if (this.sygnaly.length == 1) {
 			// int ileIndeksow = this.getSygnal().getPunktyY_wykres().size()
@@ -211,12 +243,19 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 					indexR = 0;
 				}
 
+				double wartosc = 0.0D;
+				boolean moznaDodawac = false;
+
 				for (int i = 0; i < ileIndeksow; ++i) {
 					// korelacja
-					_series.add(
-							czas,
-							this.getSygnaly()[0].korelacja(indexR + i, this.filtr,
-									this.getSygnaly()[1], ktoraOpcja));
+					wartosc = this.getSygnaly()[0].korelacja(indexR + i, this.filtr,
+							this.getSygnaly()[1], ktoraOpcja);
+					if (!moznaDodawac) {
+						moznaDodawac = wartosc != 0.0D;
+					}
+					if (moznaDodawac) {
+						_series.add(czas, wartosc);
+					}
 
 					// odstęp czasu
 					if (this.getSygnaly()[0].getRodzaj() == RodzajSygnalu.CIAGLY
@@ -230,6 +269,8 @@ public class PanelRysunek_Filtracja extends javax.swing.JPanel {
 				this.getSygnaly()[0].punktyZrekonstruowane = _series;
 			}
 		}
+		if (skopiowany) sygnaly[0].getPunktyY_wykres().clear();
+		if (skopiowany2) sygnaly[1].getPunktyY_wykres().clear();
 	}
 
 	public void setSygnal(Sygnal _sygnal) {

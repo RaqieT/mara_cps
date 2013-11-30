@@ -71,16 +71,22 @@ public class AplikacjaSymulacji extends JFrame {
 			this.obiekt = new ObiektWRuchu();
 		}
 		this.obiekt.opoznienieProbek = Integer.parseInt(""
-				+ ((JFormattedTextField) this.opcje_Obiekt.getComponent(1)).getValue());
+				+ ((JFormattedTextField) this.opcje_Obiekt.getComponent(3)).getValue());
+		System.out.println("Opóźnienie próbek: " + this.obiekt.opoznienieProbek);
 		return obiekt;
 	}
 
 	public void setObiekt(ObiektWRuchu obiekt) {
 		this.obiekt = obiekt;
 	}
+	
+	public void setWynik (double _wynik)
+	{
+		((JFormattedTextField) this.opcje_Obiekt.getComponent(7)).setValue(_wynik);
+	}
 
 	public double getJednostkaCzasowa() {
-		System.out.println(((JFormattedTextField) this.opcje_Obiekt.getComponent(1)).getValue());
+		System.out.println("Jednostka czasowa: " + ((JFormattedTextField) this.opcje_Obiekt.getComponent(1)).getValue());
 		return Double.parseDouble(""
 				+ ((JFormattedTextField) this.opcje_Obiekt.getComponent(1)).getValue());
 	}
@@ -144,14 +150,14 @@ public class AplikacjaSymulacji extends JFrame {
 	protected void startup() {
 
 		String[] labels_grupyOpcji = new String[] { "OBIEKT", "CZUJNIK", "NAWIGACJA" };
-		String[] labels_obiekt = new String[] { "<html>Jednostka<br>czasowa<br>symulatora</html>",
-				"<html>Prędkość<br>obiektu<br>(opóźnienie odbioru)</html>",
-				"<html>Prędkość<br>sygnału<br>w ośrodku</html>",
-				"<html><b>Obliczona<br>chwilowa<br>odległość</b></html>" };
+		String[] labels_obiekt = new String[] { "<html>Jednostka<br>czasowa<br>symulatora [s]</html>",
+				"<html>Prędkość<br>obiektu<br>(opóźnienie odbioru) [lp]</html>",
+				"<html>Prędkość<br>sygnału<br>w ośrodku [m/s]</html>",
+				"<html><b>Obliczona<br>chwilowa<br>odległość</b> [m]</html>" };
 		String[] labels_czujnik = new String[] { "<html>Okres<br>sygnału</html>",
 				"<html>Częstotliwość<br>próbkowania</html>", "<html>Długość<br>buforów</html>",
 				"<html>Okres<br>raportowania</html>" };
-		String[] labels_nawigacja = new String[] { "Start", "Pauza", "Stop", "Wyjście" };
+		String[] labels_nawigacja = new String[] { "Start"/*, "Pauza", "Stop", "Wyjście" */};
 		String[] labels_stylOpen = new String[] { "<html><div style='color: #999966;'>" };
 		String[] labels_stylClose = new String[] { "</div></html>" };
 
@@ -179,7 +185,7 @@ public class AplikacjaSymulacji extends JFrame {
 			getContentPane().add(opcje_Obiekt);
 			opcje_Obiekt.setBorder(new TitledBorder(labels_stylOpen[nrTxt]
 					+ labels_grupyOpcji[nrTxt] + labels_stylClose[nrTxt]));
-			for (nrTxt = 0; nrTxt < 4; ++nrTxt) {
+			for (nrTxt = 0; nrTxt < labels_obiekt.length; ++nrTxt) {
 				{
 					lbl_obiekt = new JLabel();
 					opcje_Obiekt.add(lbl_obiekt, new GridBagConstraints(nrTxt, 0, 1, 1, 0.0, 0.0,
@@ -191,7 +197,13 @@ public class AplikacjaSymulacji extends JFrame {
 				{
 					txt_obiekt = ustawTextField(opcje_Obiekt, txt_obiekt, nrTxt,
 							GridBagConstraints.WEST, false);
-					if (nrTxt == 3)
+					if (nrTxt == 0)
+						txt_obiekt.setValue(1000);
+					if (nrTxt == 1)
+						txt_obiekt.setValue(100);
+					if (nrTxt == 2)
+						txt_obiekt.setValue(299792458);
+					if (nrTxt > 1)
 						txt_obiekt.setEnabled(false);
 				}
 			}
@@ -203,7 +215,7 @@ public class AplikacjaSymulacji extends JFrame {
 			getContentPane().add(opcje_Czujnik);
 			opcje_Czujnik.setBorder(new TitledBorder(labels_stylOpen[nrTxt]
 					+ labels_grupyOpcji[nrTxt + 1] + labels_stylClose[nrTxt]));
-			for (nrTxt = 0; nrTxt < 4; ++nrTxt) {
+			for (nrTxt = 0; nrTxt < labels_czujnik.length; ++nrTxt) {
 				{
 					lbl_czujnik = new JLabel();
 					opcje_Czujnik.add(lbl_czujnik, new GridBagConstraints(nrTxt, 0, 1, 1, 0.0, 0.0,
@@ -215,6 +227,15 @@ public class AplikacjaSymulacji extends JFrame {
 				{
 					txt_czujnik = ustawTextField(opcje_Czujnik, txt_czujnik, nrTxt,
 							GridBagConstraints.WEST, false);
+					if (nrTxt == 0)
+						txt_czujnik.setValue(((PanelFiltracja)this.zrodlo).getSygnalFiltrowany().getd());
+					if (nrTxt == 1)
+						txt_czujnik.setValue(((PanelFiltracja)this.zrodlo).getSygnalFiltrowany().getkrok());
+					if (nrTxt == 2)
+						txt_czujnik.setValue(((PanelFiltracja)this.zrodlo).getSygnalFiltrowany().punktyNaWYkresie.getItemCount()/10);
+					if (nrTxt == 3)
+						txt_czujnik.setValue(((PanelFiltracja)this.zrodlo).getSygnalFiltrowany().getd());
+					if (nrTxt != 2) txt_czujnik.setEditable(false);
 				}
 			}
 		}
@@ -225,7 +246,7 @@ public class AplikacjaSymulacji extends JFrame {
 			getContentPane().add(opcje_Nawigacja);
 			opcje_Nawigacja.setBorder(new TitledBorder(labels_stylOpen[nrTxt]
 					+ labels_grupyOpcji[nrTxt + 2] + labels_stylClose[nrTxt]));
-			for (nrTxt = 0; nrTxt < 4; ++nrTxt) {
+			for (nrTxt = 0; nrTxt < labels_nawigacja.length; ++nrTxt) {
 				btn_nawigacja = new JButton();
 				opcje_Nawigacja.add(btn_nawigacja, new GridBagConstraints(nrTxt, 0, 1, 1, 0.0, 0.0,
 						GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 5,
@@ -236,11 +257,20 @@ public class AplikacjaSymulacji extends JFrame {
 					btn_nawigacja
 							.addActionListener(new Listener_SymRozpocznij(this, btn_nawigacja));
 				}
+				
 			}
 		}
 
 		Application.getInstance().getContext().getResourceMap(getClass())
 				.injectComponents(getContentPane());
+	}
+	
+	public void przyciskStop ()
+	{
+		JButton btn = (JButton)(opcje_Nawigacja.getComponent(2));
+		while (btn.getActionListeners() != null && btn.getActionListeners().length > 0)
+			btn.removeActionListener(btn.getActionListeners()[btn.getActionListeners().length - 1]);
+		btn.addActionListener(new Listener_SymZakoncz(this, btn_nawigacja));
 	}
 
 	//
@@ -252,10 +282,12 @@ public class AplikacjaSymulacji extends JFrame {
 	public void setSygnalNadawany(Sygnal _sygnalDoKorelacji) {
 		if (_sygnalDoKorelacji != null) {
 			if (this.radar == null)
-				this.radar = new UrzadzenieSprawdzajace();
+				this.radar = new UrzadzenieSprawdzajace(this);
 			if (this.radar.nadajnik == null)
 				this.radar.nadajnik = new Nadajnik(_sygnalDoKorelacji,
-						_sygnalDoKorelacji.getkroczek(), this.getJednostkaCzasowa(), false);
+						_sygnalDoKorelacji.getkroczek(), 
+						Integer.parseInt("" + ((JFormattedTextField) this.opcje_Czujnik.getComponent(5)).getValue())
+			, this.getJednostkaCzasowa(), false);
 		} else {
 			System.out
 					.println("Nie można pobrać sygnału do korelacji w: AplikacjaSymulacji:setSygnalNadawany");
