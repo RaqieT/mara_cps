@@ -28,6 +28,8 @@ public class Listener_wyborSygnalu implements ItemListener {
 			this.parametry.setTxt_WspolczynnikWypenienia(cb.getSelectedIndex() >= 6
 					&& cb.getSelectedIndex() <= 8);
 			this.parametry.setTxt_Skok(cb.getSelectedIndex() >= 9 && cb.getSelectedIndex() <= 11);
+			this.parametry.setTxt_Amplituda(cb.getSelectedIndex() != 12);
+			this.parametry.setTxt_Okres(cb.getSelectedIndex() != 12);
 		} else if (evt.getStateChange() == ItemEvent.DESELECTED) {
 			// Item is no longer selected
 		}

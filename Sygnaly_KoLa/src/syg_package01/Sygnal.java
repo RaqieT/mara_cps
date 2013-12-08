@@ -29,7 +29,10 @@ public class Sygnal {
 	 */
 	int typ;
 
-	RodzajSygnalu rodzaj = RodzajSygnalu.CIAGLY;
+	/**
+	 * Ciągły, dyskretny itp. (domyślnie ciągły)
+	 */
+	RodzajSygnalu rodzaj;// = RodzajSygnalu.CIAGLY;
 	/**
 	 * <b>Amplituda sygnału.</b><br>
 	 * Wymagane parametry sygnału: <li>ciągły
@@ -669,6 +672,7 @@ public class Sygnal {
 	}
 
 	public RodzajSygnalu getRodzaj() {
+		if (this.rodzaj == null) this.rodzaj = RodzajSygnalu.CIAGLY;
 		return this.rodzaj;
 	}
 

@@ -138,10 +138,8 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 		try {
 			prop.load(new FileInputStream("src/syg_package01/resources/Ustawienia.properties"));
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -191,10 +189,10 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 
 	}
 
-	@Action
 	/**
 	 * Informacja o korelacji.
 	 */
+	@Action
 	public void syg_Akcja_Info_Korelacja() throws HeadlessException {
 		try {
 			String msgFiltru = "Informacja o korelacji sygnałów:\n";
@@ -261,10 +259,10 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	@Action
 	/**
 	 * Informacja o wersji.
 	 */
+	@Action
 	public void syg_AkcjaInfo1() throws HeadlessException {
 		Properties prop = new Properties();
 		try {
@@ -278,10 +276,10 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	@Action
 	/**
 	 * Informacja o autorach.
 	 */
+	@Action
 	public void syg_AkcjaInfo2() throws HeadlessException {
 		Properties prop = new Properties();
 		try {
@@ -477,7 +475,6 @@ public class AplikacjaGlowna extends SingleFrameApplication {
 	 *         "ok" lub: "Sygnały nie mogą być dodane.[...]"
 	 */
 	private String sprawdzPoprawnoscOperacji(Sygnal _sygnalA, Sygnal _sygnalB) {
-		// TODO Auto-generated method stub
 		String msg = "";
 		if (_sygnalA.porownajSygnal(_sygnalB, RodzajSygnalu.DYSKRETNY)) {
 			msg = "ok";

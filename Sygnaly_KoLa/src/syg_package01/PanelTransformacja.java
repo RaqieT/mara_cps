@@ -159,11 +159,11 @@ public class PanelTransformacja extends PanelObslugi {
 		String msgPoprawnosci = "<nie zdefiniowano poprawnych waruków>";
 
 		if (this.getCb_transformacja() > 0 && this.getCb_tryb() > 0) {
-			if (sygnal.getRodzaj() == RodzajSygnalu.DYSKRETNY) {
+			if (this.sygnal.getRodzaj() != RodzajSygnalu.CIAGLY) {
 				msgPoprawnosci = "ok";
 			}
 			else {
-				msgPoprawnosci = "Sygnał nie jest zdyskretyzowany. ";
+				msgPoprawnosci = "Sygnał jest ciągły.";
 			}
 		} else {
 			msgPoprawnosci = "Nie wybrano trybu lub transformacji.";

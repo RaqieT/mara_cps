@@ -66,7 +66,7 @@ public class Listener_wyswietlWykres implements ActionListener {
 						.setEnabled(true);
 				((JTabbedPane) this.splitPane.getComponent(1)).setEnabledAt(2, true);
 
-				// przekazanie utworzonego sygnału do paneli
+				// przekazanie utworzonego sygnału do panelu
 				((PanelKonwersja) ((JTabbedPane) this.splitPane.getComponent(1)).getComponentAt(1))
 						.setSygnalKonwertowany(this.sygnal);
 				// ((PanelFiltracja) ((JTabbedPane)

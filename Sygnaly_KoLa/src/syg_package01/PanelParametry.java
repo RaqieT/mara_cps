@@ -101,6 +101,24 @@ public class PanelParametry extends PanelObslugi {
 			this.txt_Skok.setText("");
 	}
 
+	public boolean getTxt_Amplituda() {
+		return txt_Amplituda.isEditable();
+	}
+
+	public void setTxt_Amplituda(boolean _czyDostepne) {
+		this.txt_Amplituda.setEditable(_czyDostepne);
+		if (!_czyDostepne)
+			this.txt_Amplituda.setText("");
+	}
+
+	public void setTxt_Okres(boolean _czyDostepne) {
+		this.txt_OkresPodstawowy.setEditable(_czyDostepne);
+		this.cb_OkresLubCzestotliwosc.setEnabled(_czyDostepne);
+		if (!_czyDostepne) {
+			this.txt_OkresPodstawowy.setText("");
+		}
+	}
+
 	/**
 	 * Auto-generated main method to display this JPanel inside a new JFrame.
 	 * 
@@ -228,7 +246,19 @@ public class PanelParametry extends PanelObslugi {
 		int id = this.cb_wybor123.getSelectedIndex();
 
 		if (this.listaSygnaow[id].getRodzaj() == RodzajSygnalu.CIAGLY) {
-			double okres = Double.parseDouble(this.txt_OkresPodstawowy.getText());
+			// okres
+			double okres = 0.0;
+			if (this.txt_OkresPodstawowy.isEditable()) {
+				okres = Double.parseDouble(this.txt_OkresPodstawowy.getText());
+			}else
+			{
+				
+			}
+			// amplituda
+			double amplituda = 0.0;
+			if (this.txt_Amplituda.isEditable()) {
+				amplituda = Double.parseDouble(this.txt_Amplituda.getText());
+			}
 
 			if (this.cb_OkresLubCzestotliwosc.getSelectedIndex() == 1) {
 				okres = 1.0D / okres;
@@ -236,8 +266,7 @@ public class PanelParametry extends PanelObslugi {
 
 			if (txt_WspolczynnikWypenienia.isEditable() && txt_Skok.isEditable()) {
 				this.listaSygnaow[id].pobierzParametryUzytkownika(
-						this.cb_wyborSygnalu.getSelectedIndex(),
-						Double.parseDouble(this.txt_Amplituda.getText()),
+						this.cb_wyborSygnalu.getSelectedIndex(), amplituda,
 						Double.parseDouble(this.txt_CzasPoczatkowy.getText()),
 						this.listaSygnaow[id].getts(),
 						Double.parseDouble(this.txt_CzasTrwania.getText()), okres,
@@ -245,16 +274,14 @@ public class PanelParametry extends PanelObslugi {
 						Double.parseDouble(this.txt_Skok.getText()));
 			} else if (!txt_WspolczynnikWypenienia.isEditable() && txt_Skok.isEditable()) {
 				this.listaSygnaow[id].pobierzParametryUzytkownika(
-						this.cb_wyborSygnalu.getSelectedIndex(),
-						Double.parseDouble(this.txt_Amplituda.getText()),
+						this.cb_wyborSygnalu.getSelectedIndex(), amplituda,
 						Double.parseDouble(this.txt_CzasPoczatkowy.getText()),
 						this.listaSygnaow[id].getts(),
 						Double.parseDouble(this.txt_CzasTrwania.getText()), okres,
 						this.listaSygnaow[id].getKw(), Double.parseDouble(this.txt_Skok.getText()));
 			} else if (txt_WspolczynnikWypenienia.isEditable() && !txt_Skok.isEditable()) {
 				this.listaSygnaow[id].pobierzParametryUzytkownika(
-						this.cb_wyborSygnalu.getSelectedIndex(),
-						Double.parseDouble(this.txt_Amplituda.getText()),
+						this.cb_wyborSygnalu.getSelectedIndex(), amplituda,
 						Double.parseDouble(this.txt_CzasPoczatkowy.getText()),
 						this.listaSygnaow[id].getts(),
 						Double.parseDouble(this.txt_CzasTrwania.getText()), okres,
@@ -262,8 +289,7 @@ public class PanelParametry extends PanelObslugi {
 						this.listaSygnaow[id].getskok());
 			} else {
 				this.listaSygnaow[id].pobierzParametryUzytkownika(
-						this.cb_wyborSygnalu.getSelectedIndex(),
-						Double.parseDouble(this.txt_Amplituda.getText()),
+						this.cb_wyborSygnalu.getSelectedIndex(), amplituda,
 						Double.parseDouble(this.txt_CzasPoczatkowy.getText()),
 						this.listaSygnaow[id].getts(),
 						Double.parseDouble(this.txt_CzasTrwania.getText()), okres,
@@ -296,14 +322,14 @@ public class PanelParametry extends PanelObslugi {
 	 */
 	public String sprawdzPoprawnosc() {
 		if (listaSygnaow[cb_wybor123.getSelectedIndex()].getRodzaj() == RodzajSygnalu.CIAGLY) {
-			if (this.txt_Amplituda.getText().isEmpty()
-					|| !this.txt_Amplituda.isValid()
+			if ((this.txt_Amplituda.isEditable() && (this.txt_Amplituda.getText().isEmpty() || !this.txt_Amplituda
+					.isValid()))
 					|| this.txt_CzasPoczatkowy.getText().isEmpty()
 					|| !this.txt_CzasPoczatkowy.isValid()
 					|| this.txt_CzasTrwania.getText().isEmpty()
 					|| !this.txt_CzasTrwania.isValid()
-					|| this.txt_OkresPodstawowy.getText().isEmpty()
-					|| !this.txt_OkresPodstawowy.isValid()
+					|| (this.txt_OkresPodstawowy.isEditable() && (this.txt_OkresPodstawowy
+							.getText().isEmpty() || !this.txt_OkresPodstawowy.isValid()))
 					|| (this.txt_WspolczynnikWypenienia.getText().isEmpty() && this.txt_WspolczynnikWypenienia
 							.isEditable())
 					|| (!this.txt_WspolczynnikWypenienia.isValid() && this.txt_WspolczynnikWypenienia
@@ -355,7 +381,7 @@ public class PanelParametry extends PanelObslugi {
 					"sygnał sinusoidalny wyprostowany jednopołówkowo",
 					"sygnał sinusoidalny wyprostowany dwupołówkowo", "sygnał prostokątny",
 					"sygnał prostokątny symetryczny", "sygnał trójkątny", "skok jednostkowy",
-					"impuls jednostkowy", "szum impulsowy"/*, "sygnał S2 z zad4"*/ };
+					"impuls jednostkowy", "szum impulsowy", "sygnał S2 do zad4" };
 
 			labels123 = new String[] { "podstawowy", "drugi", "wynikowy" };
 
