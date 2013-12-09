@@ -57,7 +57,7 @@ public class Akcja_zapisz {
 			_xstream.omitField(Sygnal.class, "punktyZrekonstruowane");
 			_xstream.omitField(Sygnal.class, "poziom_kwantyzacji_krok");
 			_xstream.omitField(Sygnal.class, "poziomy_kwantyzacji");
-			if (this.sygnal.gettyp() != 9 || this.sygnal.gettyp() != 10) {
+			if (this.sygnal.gettyp() != 9 && this.sygnal.gettyp() != 10) {
 				_xstream.omitField(Sygnal.class, "skok");
 			}
 		}

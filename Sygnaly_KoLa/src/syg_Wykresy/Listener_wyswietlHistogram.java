@@ -10,6 +10,7 @@ import javax.swing.JTabbedPane;
 
 import syg_package01.PanelKonwersja;
 import syg_package01.PanelParametry;
+import syg_package01.PanelTransformacja;
 import syg_package01.Sygnal;
 import syg_package01.Sygnal.RodzajSygnalu;
 
@@ -62,6 +63,11 @@ public class Listener_wyswietlHistogram implements ActionListener {
 				// wyzerowanie kroku zmian
 				((PanelKonwersja) ((JTabbedPane) this.splitPane.getComponent(1)).getComponentAt(1))
 						.przestawKrokDoPoczatku();
+
+				// przekazanie sygnału do panelu transformacji
+				((PanelTransformacja) ((JTabbedPane) this.splitPane.getComponent(1)).getComponentAt(3))
+						.setSygnal(this.sygnal);
+
 			} else {
 				JOptionPane.showMessageDialog(null, msgPoprawnosc,
 						"Nie można wyświetlić histogramu", JOptionPane.ERROR_MESSAGE);

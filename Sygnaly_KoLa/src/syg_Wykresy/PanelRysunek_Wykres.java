@@ -104,7 +104,6 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 				} else if (this.sygnalWyswietlany.getRodzaj() == RodzajSygnalu.DYSKRETNY
 						&& sygnalWyswietlany.getPunktyY_wykres().size() > 0) {
 					int iloscProbek = (int) (this.sygnalWyswietlany.getPunktyY_wykres().size());
-					
 					for (int i = 0; i < iloscProbek; i++) {
 						punkt = this.sygnalWyswietlany.getPunktzindexu(i);
 						series.add(ta, punkt);

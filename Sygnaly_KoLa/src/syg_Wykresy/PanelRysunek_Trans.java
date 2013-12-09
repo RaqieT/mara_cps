@@ -1,5 +1,6 @@
 package syg_Wykresy;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.List;
@@ -34,8 +35,10 @@ public class PanelRysunek_Trans extends javax.swing.JPanel {
 	int widok, przeksztalcenie;
 	Sygnal sygnal;
 	JFreeChart chart_g;
+	JFreeChart chart_d;
 	ChartPanel chartpanel;
-		
+	ChartPanel chartpanel_d;
+
 	public PanelRysunek_Trans(int _widok, int _przeksztalcenie, Sygnal _sygnal) {
 		super();
 		this.widok = _widok;
@@ -43,38 +46,42 @@ public class PanelRysunek_Trans extends javax.swing.JPanel {
 		this.sygnal = _sygnal;
 		initGUI();
 	}
-	
+
 	public void rysuj() {
 		if (this.sygnal == null) {
 			JOptionPane.showMessageDialog(null, "brak sygnału", "Przekształcenie - rysunek",
 					JOptionPane.ERROR_MESSAGE);
 		} else {
 			// rysujPodstawowy();
-			if (this.przeksztalcenie == 0) {
-				// dyskretna transformacja Fouriera F2
+			XYSeriesCollection dataset_1 = null;
+			XYSeriesCollection dataset_2 = null;
+			List<Complex> complexList = null;
+			if (this.przeksztalcenie == 1) { // dyskretna transformacja Fouriera
+												// F2
 
-				double punkt;
-				double ta = this.sygnal.gett1();
+				complexList = this.sygnal.FFT(this.sygnal.getPunktyY_probkowanie());
 
-				List<Complex> fft = this.sygnal.FFT(this.sygnal.getPunktyY_probkowanie());
-				
-				if (this.sygnal.getRodzaj() == RodzajSygnalu.CIAGLY
-						|| sygnal.getPunktyY_wykres().size() <= 0) {
-					punkt = this.sygnal.gett1();
-					int index = 0;
-					while (ta <= this.sygnal.gett1() + this.sygnal.getd()) {
-						punkt = fft.get(index).getReal();
-						series_w1g.add(ta, punkt);
-						series_w1g.add(ta, fft.get(index).getImaginary());
-						ta = ta + this.sygnal.getkrok();
-						index++;
+			} else if (this.przeksztalcenie == 2) { // transformacja
+													// Walsha-Hadamarda
+				complexList = this.sygnal.Hadamard();
+			}
+
+			if (complexList != null) {
+				if (complexList.size() > 0) {
+					for (int i = 0; i < complexList.size(); ++i) {
+						if (this.widok == 1) {
+							series_w1g.add(i, complexList.get(i).getReal());
+							series_w1d.add(i, complexList.get(i).getImaginary());
+							dataset_1 = new XYSeriesCollection(series_w1g);
+							dataset_2 = new XYSeriesCollection(series_w1d);
+						} else {
+							series_w2g.add(i, complexList.get(i).abs());
+							series_w2d.add(i, complexList.get(i).getArgument());
+							dataset_1 = new XYSeriesCollection(series_w2g);
+							dataset_2 = new XYSeriesCollection(series_w2d);
+						}
 					}
 				}
-
-				XYSeriesCollection dataset_1 = new XYSeriesCollection(series_w1g);
-				// XYSeriesCollection dataset_0 = new XYSeriesCollection(
-				// series_0);
-				// dataset_s1.addSeries(series_0);
 
 				chart_g = ChartFactory.createXYLineChart(null, null, null, dataset_1,
 						PlotOrientation.VERTICAL, true, true, true);
@@ -86,20 +93,42 @@ public class PanelRysunek_Trans extends javax.swing.JPanel {
 				renderer_g.setDotWidth(5);
 
 				// plot_k.setDataset(dataset_s1);
-				plot_g.setRenderer(0, renderer_g);
+				plot_g.setRenderer(renderer_g);
 
 				final NumberAxis rangeAxis_s1 = (NumberAxis) plot_g.getRangeAxis();
 				rangeAxis_s1.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
+				// chartpanel = new ChartPanel(chart_g);
 				chartpanel = new ChartPanel(chart_g);
+				chartpanel.setDomainZoomable(true);
+				this.add(chartpanel, BorderLayout.NORTH);
 
-			} 
+				chart_d = ChartFactory.createXYLineChart(null, null, null, dataset_2,
+						PlotOrientation.VERTICAL, true, true, true);
+
+				// CategoryPlot plot = new CategoryPlot();
+				final XYPlot plot_d = chart_d.getXYPlot();
+				final XYDotRenderer renderer_d = new XYDotRenderer();
+				renderer_d.setDotHeight(5);
+				renderer_d.setDotWidth(5);
+
+				// plot_k.setDataset(dataset_s1);
+				plot_d.setRenderer(renderer_d);
+
+				final NumberAxis rangeAxis_s2 = (NumberAxis) plot_d.getRangeAxis();
+				rangeAxis_s2.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+				// chartpanel = new ChartPanel(chart_g);
+				chartpanel_d = new ChartPanel(chart_d);
+				chartpanel_d.setDomainZoomable(true);
+				this.add(chartpanel_d, BorderLayout.SOUTH);
+			}
 		}
 	}
-	
+
 	private void initGUI() {
 		try {
-			GridLayout thisLayout = new GridLayout(1, 1);
+			GridLayout thisLayout = new GridLayout(2, 1);
 			thisLayout.setHgap(5);
 			thisLayout.setVgap(5);
 			thisLayout.setColumns(1);
@@ -107,13 +136,6 @@ public class PanelRysunek_Trans extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(400, 300));
 
 			this.rysuj();
-
-			if (przeksztalcenie < 2 && przeksztalcenie > 0 && sygnal != null) {
-				chartpanel = new ChartPanel(chart_g);
-				chartpanel.setDomainZoomable(true);
-
-				this.add(chartpanel);
-			}
 
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);

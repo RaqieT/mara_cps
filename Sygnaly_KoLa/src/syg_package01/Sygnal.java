@@ -126,17 +126,16 @@ public class Sygnal {
 	public double konwersja_probkowanie(double _t) {
 		return 0.0D;
 	}
-	
-	public void kopiuj (Sygnal _sygnalKopiowany)
-	{
+
+	public void kopiuj(Sygnal _sygnalKopiowany) {
 		this.A = _sygnalKopiowany.getA();
 		this.d = _sygnalKopiowany.getd();
 		this.kroczek = _sygnalKopiowany.getkroczek();
 		this.krok = _sygnalKopiowany.getkrok();
 		this.punktyNaWYkresie = new XYSeries(_sygnalKopiowany.punktyNaWYkresie.getKey());
-		for (int i = 0; i < _sygnalKopiowany.punktyNaWYkresie.getItemCount(); ++i)
-		{
-			this.punktyNaWYkresie.add(new XYDataItem(_sygnalKopiowany.punktyNaWYkresie.getX(i).doubleValue(), _sygnalKopiowany.punktyNaWYkresie.getY(i).doubleValue()));
+		for (int i = 0; i < _sygnalKopiowany.punktyNaWYkresie.getItemCount(); ++i) {
+			this.punktyNaWYkresie.add(new XYDataItem(_sygnalKopiowany.punktyNaWYkresie.getX(i)
+					.doubleValue(), _sygnalKopiowany.punktyNaWYkresie.getY(i).doubleValue()));
 		}
 		this.rodzaj = _sygnalKopiowany.rodzaj;
 		this.T = _sygnalKopiowany.getT();
@@ -195,9 +194,9 @@ public class Sygnal {
 						/ (_punkty.getX(iWiekszy).doubleValue() - _punkty.getX(iMniejszy)
 								.doubleValue())));
 			}
-		}else
-		{
-			System.out.println("Brak danych o wartościach próbek w: Sygnal:znajdzWartoscNaWykresie");
+		} else {
+			System.out
+					.println("Brak danych o wartościach próbek w: Sygnal:znajdzWartoscNaWykresie");
 			return 0.0D;
 		}
 	}
@@ -672,7 +671,8 @@ public class Sygnal {
 	}
 
 	public RodzajSygnalu getRodzaj() {
-		if (this.rodzaj == null) this.rodzaj = RodzajSygnalu.CIAGLY;
+		if (this.rodzaj == null)
+			this.rodzaj = RodzajSygnalu.CIAGLY;
 		return this.rodzaj;
 	}
 
@@ -1039,37 +1039,42 @@ public class Sygnal {
 	 */
 	public void wyczyscPunkty(boolean _wykresu) {
 		if (_wykresu) {
-			this.getPunktyY_wykres().clear();
-			this.getPunktyY_probkowanie().clear();
-			this.getPunktyY_kwantyzacja().clear();
+			this.punktyY_wykres.clear();
+			this.punktyY_probkowanie.clear();
+			this.punktyY_kwantyzacja.clear();
 			this.punktyNaWYkresie.clear();
 			this.punktyZrekonstruowane.clear();
 		} else {
-			this.getPunktyY_probkowanie().clear();
-			this.getPunktyY_kwantyzacja().clear();
+			// this.punktyY_probkowanie.clear();
+			this.punktyY_kwantyzacja.clear();
 			this.punktyZrekonstruowane.clear();
 		}
 	}
 
 	public void setPunktyY_wykres(double _punktyY_wykres) {
-		if (this.punktyY_wykres == null) this.punktyY_wykres = new ArrayList<Double>();
+		if (this.punktyY_wykres == null)
+			this.punktyY_wykres = new ArrayList<Double>();
 		this.punktyY_wykres.add(_punktyY_wykres);
 	}
+
 	public void setPunktyY_wykres(List<Double> _punktyY_wykres) {
-		if (this.punktyY_wykres == null) this.punktyY_wykres = new ArrayList<Double>();
+		if (this.punktyY_wykres == null)
+			this.punktyY_wykres = new ArrayList<Double>();
 		this.punktyY_wykres.addAll(_punktyY_wykres);
 	}
+
 	/**
 	 * ustawia wartości dla <i>punktyY_wykres</i> z <i>_punktyNaWYkresie</i>
+	 * 
 	 * @param _punktyNaWYkresie
 	 */
 	public void setPunktyY_wykres(XYSeries _punktyNaWYkresie) {
-		if (this.punktyY_wykres == null) this.punktyY_wykres = new ArrayList<Double>();
+		if (this.punktyY_wykres == null)
+			this.punktyY_wykres = new ArrayList<Double>();
 		for (int i = 0; i < _punktyNaWYkresie.getItemCount(); ++i) {
 			this.punktyY_wykres.add(_punktyNaWYkresie.getY(i).doubleValue());
 		}
 	}
-
 
 	public List<Double> getPunktyY_wykres() {
 		return punktyY_wykres;
@@ -1080,6 +1085,12 @@ public class Sygnal {
 	}
 
 	public List<Double> getPunktyY_probkowanie() {
+		if (this.punktyY_probkowanie == null
+				|| (this.punktyY_probkowanie != null && this.punktyY_probkowanie.size() <= 0)) {
+			if (this.punktyY_wykres != null) {
+				this.punktyY_probkowanie = this.punktyY_wykres;
+			}
+		}
 		return punktyY_probkowanie;
 	}
 
@@ -1244,7 +1255,7 @@ public class Sygnal {
 	 * @return
 	 */
 	public double korelacja(int _n, Filtr _filtr, Sygnal _sygnal2, int _ktoraOpcja) {
-		
+
 		int M = _sygnal2.getPunktyY_wykres().size();
 		double R_n = 0.0D;
 		int pom = 0;
@@ -1282,7 +1293,7 @@ public class Sygnal {
 		int liczbaBitow = 0;
 
 		// uzupelnienie zerami do potegi 2:
-		for (int i = listaTemp.size(); i < liczbaBitow; i++) {
+		for (int i = listaTemp.size(); i > liczbaBitow; --i) {
 			listaTemp.add(new Complex(0, 0));
 		}
 
@@ -1333,5 +1344,62 @@ public class Sygnal {
 			wynik += bit;
 		}
 		return wynik;
+	}
+
+	private void H_rek(int _m, int _m_lp, double[][] _maciez) {
+		if (_m_lp >= _m)
+			return;
+		else {
+			int iloscW = (int) Math.pow(2, _m_lp);
+			int iloscK = (int) Math.pow(2, _m_lp);
+
+			if (_m_lp == 0) {
+				_maciez[0][0] = 1;
+			} else {
+				for (int w = 0; w < iloscW; ++w) {
+					for (int k = 0; k < iloscK; ++k) {
+						_maciez[w][iloscK + k] = _maciez[w][k];
+						_maciez[iloscW + w][k] = _maciez[w][k];
+						_maciez[iloscW + w][iloscK + k] = -_maciez[w][k];
+					}
+				}
+			}
+
+			H_rek(_m, ++_m_lp, _maciez);
+		}
+	}
+
+	public List<Complex> Hadamard() {
+		// if (Math.log(_m)/Math.log(2))
+		int N = this.punktyY_probkowanie.size();
+		int m = (int) (Math.log(N) / Math.log(2));
+
+		double[][] maciezHadamarda = new double[(int) Math.pow(2, m - 1)][(int) Math.pow(2, m - 1)];
+		H_rek(m - 1, 0, maciezHadamarda);
+
+		Complex suma, roznica;
+		List<Complex> punktyWynikowe = new ArrayList<Complex>();
+		for (int i = 0; i < punktyY_probkowanie.size(); ++i) {
+			punktyWynikowe.add(new Complex(0, 0));
+		}
+
+		for (int probka = 0; probka < N / 2; ++probka) {
+			suma = new Complex(0, 0);
+			roznica = new Complex(0, 0);
+			for (int mnozenie = 0; mnozenie < N / 2; ++mnozenie) {
+				suma = suma.add(W(probka, N/2).multiply(
+						maciezHadamarda[probka][mnozenie]
+								* (punktyY_probkowanie.get(probka) + punktyY_probkowanie.get(N / 2
+										+ probka - 1))));
+				roznica = roznica.add(W(probka, N/2).multiply(
+						maciezHadamarda[probka][mnozenie]
+								* (punktyY_probkowanie.get(probka) - punktyY_probkowanie.get(N / 2
+										+ probka - 1))));
+			}
+			punktyWynikowe.add(suma);
+			punktyWynikowe.add(roznica);
+		}
+
+		return punktyWynikowe;
 	}
 }

@@ -11,6 +11,7 @@ import javax.swing.JTabbedPane;
 import syg_package01.PanelFiltracja;
 import syg_package01.PanelKonwersja;
 import syg_package01.PanelParametry;
+import syg_package01.PanelTransformacja;
 import syg_package01.Sygnal;
 import syg_package01.Sygnal.RodzajSygnalu;
 
@@ -69,9 +70,10 @@ public class Listener_wyswietlWykres implements ActionListener {
 				// przekazanie utworzonego sygnału do panelu
 				((PanelKonwersja) ((JTabbedPane) this.splitPane.getComponent(1)).getComponentAt(1))
 						.setSygnalKonwertowany(this.sygnal);
-				// ((PanelFiltracja) ((JTabbedPane)
-				// this.splitPane.getComponent(1))
-				// .getComponentAt(2)).setSygnalFiltrowany(this.sygnal);
+				((PanelFiltracja) ((JTabbedPane) this.splitPane.getComponent(1)).getComponentAt(2))
+						.setSygnalFiltrowany(this.sygnal);
+				((PanelTransformacja) ((JTabbedPane) this.splitPane.getComponent(1))
+						.getComponentAt(3)).setSygnal(this.sygnal);
 
 				// wyzerowanie kroku zmian
 				((PanelKonwersja) ((JTabbedPane) this.splitPane.getComponent(1)).getComponentAt(1))
@@ -92,7 +94,7 @@ public class Listener_wyswietlWykres implements ActionListener {
 	private void wyswietlWykres() {
 		this.rysunek = new PanelRysunek_Wykres(this.sygnal);
 		this.splitPane.add(rysunek, JSplitPane.RIGHT);
-		sygnal = rysunek.getSygnalWyswietlany();
+		//this.sygnal.punktyNaWYkresie = this.rysunek.getSygnalWyswietlany().punktyNaWYkresie;
 	}
 
 	public void setParametry(PanelParametry parametry) {

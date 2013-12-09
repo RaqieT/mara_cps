@@ -53,7 +53,7 @@ public class Listener_transformuj implements ActionListener {
 
 	private void wyswietlWykres(int _widok, int _przeksztalcenie) {
 		this.rysunek = new PanelRysunek_Trans(_widok, _przeksztalcenie, this.getSygnal());
-		
+		this.splitPane.add(rysunek, JSplitPane.RIGHT);
 		//this.rysunek.setSygnalPodstawowy(this.sygnal);
 		//this.rysunek.setWidok(_widok);
 		//this.rysunek.setNrPrzeksztalcenia(_przeksztalcenie);
