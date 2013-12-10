@@ -1322,7 +1322,7 @@ public class Sygnal {
 		return transformata;
 	}
 
-	public static List<Complex> DFT(List<Double> punktyY) {
+	public List<Complex> DFT(List<Double> punktyY) {
 		List<Complex> wynik = new ArrayList<Complex>();
 		for (int m = 0; m < punktyY.size(); m++) {
 			Complex suma = new Complex(0, 0);
@@ -1350,8 +1350,8 @@ public class Sygnal {
 		if (_m_lp >= _m)
 			return;
 		else {
-			int iloscW = (int) Math.pow(2, _m_lp);
-			int iloscK = (int) Math.pow(2, _m_lp);
+			int iloscW = (int) Math.pow(2, _m_lp) / 2;
+			int iloscK = (int) Math.pow(2, _m_lp) / 2;
 
 			if (_m_lp == 0) {
 				_maciez[0][0] = 1;
@@ -1369,35 +1369,182 @@ public class Sygnal {
 		}
 	}
 
-	public List<Complex> Hadamard() {
-		// if (Math.log(_m)/Math.log(2))
-		int N = this.punktyY_probkowanie.size();
-		int m = (int) (Math.log(N) / Math.log(2));
+	public List<Complex> Hadamard2() {
+		// pobranie właściwych punktów
+		if (this.punktyY_probkowanie == null
+				|| (this.punktyY_probkowanie != null && this.punktyY_probkowanie.size() <= 0)) {
+			this.punktyY_probkowanie = this.punktyY_wykres;
+		}
 
+		// doprowadzenie do potęgi "2"
+		int N = this.punktyY_probkowanie.size();
+		while ((double) ((int) (Math.log(N) / Math.log(2))) != (double) (Math.log(N) / Math.log(2))) {
+			--N;
+		}
+		int m = (int) (Math.log(N) / Math.log(2)); // m dla Hadamrda i ilość
+													// motylków
+
+		// wyznaczenie macierzy Hadamarda
 		double[][] maciezHadamarda = new double[(int) Math.pow(2, m - 1)][(int) Math.pow(2, m - 1)];
-		H_rek(m - 1, 0, maciezHadamarda);
+		H_rek(m, 0, maciezHadamarda);
+
+		List<Complex> punktyWynikowe = new ArrayList<Complex>();
+
+		double stala = 1.0 / Math.sqrt(2);
+
+		// Complex gora, dol;
+		// int motylkiWbloku; // liczba motylkow w bloku;
+		// int liczbaBlokow;
+		// int indexA, indexB;
+
+		for (int i = 0; i < N; i++) {
+			punktyWynikowe.add((new Complex(punktyY_probkowanie.get(i), punktyY_probkowanie.get(i))
+					/*.multiply(W(i, N))*/));
+		}
+
+		// for (int _N = N; _N > 1; _N /= 2) { // etapy
+		// motylkiWbloku = _N / 2;
+		// liczbaBlokow = N / _N;
+		// for (int i = 0; i < liczbaBlokow; ++i) {
+		// for (int j = 0; j < motylkiWbloku; ++j) {
+		// indexA = i * _N + j;
+		// indexB = indexA + motylkiWbloku;
+		// gora = punktyWynikowe.get(indexA).add(punktyWynikowe.get(indexB));
+		// dol =
+		// punktyWynikowe.get(indexA).subtract(punktyWynikowe.get(indexB)).multiply(W(j,
+		// _N));
+		// punktyWynikowe.set(indexA, gora);
+		// punktyWynikowe.set(indexB, dol);
+		// }
+		// }
+		// }
+
+		List<Complex> punktyWynikowe2 = new ArrayList<Complex>();
+
+		for (int w = 0; w < N / 2; ++w) {
+			double tmp1 = 0.0;
+			double tmp2 = 0.0;
+			for (int k = 0; k < N / 2; ++k) {
+				tmp1 += (punktyY_probkowanie.get(k) + punktyY_probkowanie.get(k + N / 2 - 1))
+						* (maciezHadamarda[w][k]);
+				tmp1 *= stala;
+				tmp2 += (punktyY_probkowanie.get(k) - punktyY_probkowanie.get(k + N / 2 - 1))
+						* (maciezHadamarda[w][k]);
+				tmp2 *= stala;
+			}
+			punktyWynikowe2.add(new Complex(tmp1, tmp1).multiply(W(w, N / 2)));
+			punktyWynikowe2.add(new Complex(tmp2, tmp2).multiply(W(w, N / 2)));
+		}
+
+		// punktyWynikowe2.addAll(punktyWynikowe2);
+
+		return punktyWynikowe2;
+	}
+	
+	public List<Complex> Hadamard() {
+		// pobranie właściwych punktów
+		if (this.punktyY_probkowanie == null
+				|| (this.punktyY_probkowanie != null && this.punktyY_probkowanie.size() <= 0)) {
+			this.punktyY_probkowanie = this.punktyY_wykres;
+		}
+
+		// doprowadzenie do potęgi "2"
+		int N = this.punktyY_probkowanie.size();
+		while ((double) ((int) (Math.log(N) / Math.log(2))) != (double) (Math.log(N) / Math.log(2))) {
+			--N;
+		}
+		int m = (int) (Math.log(N) / Math.log(2)); // m dla Hadamrda i ilość
+													// motylków
+
+		// wyznaczenie macierzy Hadamarda
+		double[][] maciezHadamarda = new double[(int) Math.pow(2, m)][(int) Math.pow(2, m)];
+		H_rek(m+1, 0, maciezHadamarda);
+
+		Complex suma;
+		List<Complex> punktyWynikowe = new ArrayList<Complex>();
+
+		double stala = 1.0 / Math.sqrt(2);
+
+		for (int probka = 0; probka < N; ++probka) {
+			suma = new Complex(0, 0);
+			for (int mnozenie = 0; mnozenie < N; ++mnozenie) {
+				suma = suma.add(W(mnozenie, N).multiply(
+						maciezHadamarda[probka][mnozenie]
+								* (punktyY_probkowanie.get(probka))));
+			}
+			punktyWynikowe.add(suma.multiply(stala));
+		}
+
+		return punktyWynikowe;
+	}
+
+	public List<Complex> HadamardSzybki() {
+		// pobranie właściwych punktów
+		if (this.punktyY_probkowanie == null
+				|| (this.punktyY_probkowanie != null && this.punktyY_probkowanie.size() <= 0)) {
+			this.punktyY_probkowanie = this.punktyY_wykres;
+		}
+
+		// doprowadzenie do potęgi "2"
+		int N = this.punktyY_probkowanie.size();
+		while ((double) ((int) (Math.log(N) / Math.log(2))) != (double) (Math.log(N) / Math.log(2))) {
+			--N;
+		}
+		int m = (int) (Math.log(N) / Math.log(2)); // m dla Hadamrda i ilość
+													// motylków
+
+		// wyznaczenie macierzy Hadamarda
+		double[][] maciezHadamarda = new double[(int) Math.pow(2, m - 1)][(int) Math.pow(2, m - 1)];
+		H_rek(m, 0, maciezHadamarda);
 
 		Complex suma, roznica;
 		List<Complex> punktyWynikowe = new ArrayList<Complex>();
-		for (int i = 0; i < punktyY_probkowanie.size(); ++i) {
-			punktyWynikowe.add(new Complex(0, 0));
-		}
 
+		double stala = 1.0 / Math.sqrt(2);
+
+		// int N_dlaW = N;
+
+		// double sumaD = 0.0, roznicaD = 0.0;
+		// for (int probka = 0; probka < N / 2; ++probka) {
+		// sumaD = 0.0D;
+		// roznicaD = 0.0D;
+		// for (int mnozenie = 0; mnozenie < N / 2; ++mnozenie) {
+		// sumaD += maciezHadamarda[probka][mnozenie]
+		// * (punktyY_probkowanie.get(probka) + punktyY_probkowanie.get(N / 2
+		// + probka - 1));
+		// roznicaD += maciezHadamarda[probka][mnozenie]
+		// * (punktyY_probkowanie.get(probka) - punktyY_probkowanie.get(N / 2
+		// + probka - 1));
+		// }
+		// sumaD *= stala;
+		// roznicaD *= stala;
+		// punktyWynikowe.add(W(probka, N/2).multiply(sumaD));
+		// punktyWynikowe.add(W(probka, N/2).multiply(roznicaD));
+		// }
+
+		// 1. połowa
 		for (int probka = 0; probka < N / 2; ++probka) {
+			// N_dlaW /= 2;
 			suma = new Complex(0, 0);
-			roznica = new Complex(0, 0);
 			for (int mnozenie = 0; mnozenie < N / 2; ++mnozenie) {
-				suma = suma.add(W(probka, N/2).multiply(
+				suma = suma.add(W(/*probka * N / 2 + */mnozenie, N / 2).multiply(
 						maciezHadamarda[probka][mnozenie]
 								* (punktyY_probkowanie.get(probka) + punktyY_probkowanie.get(N / 2
 										+ probka - 1))));
-				roznica = roznica.add(W(probka, N/2).multiply(
+			}
+			punktyWynikowe.add(suma.multiply(stala));
+		}
+
+		// 2. połowa
+		for (int probka = 0; probka < N / 2; ++probka) {
+			roznica = new Complex(0, 0);
+			for (int mnozenie = 0; mnozenie < N / 2; ++mnozenie) {
+				roznica = roznica.add(W(/*probka * N / 2 + */mnozenie, N / 2).multiply(
 						maciezHadamarda[probka][mnozenie]
 								* (punktyY_probkowanie.get(probka) - punktyY_probkowanie.get(N / 2
 										+ probka - 1))));
 			}
-			punktyWynikowe.add(suma);
-			punktyWynikowe.add(roznica);
+			punktyWynikowe.add(roznica.multiply(stala));
 		}
 
 		return punktyWynikowe;

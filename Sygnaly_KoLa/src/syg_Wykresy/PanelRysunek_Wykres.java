@@ -81,7 +81,7 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 				if (this.sygnalWyswietlany.getRodzaj() == RodzajSygnalu.CIAGLY
 						|| sygnalWyswietlany.getPunktyY_wykres().size() <= 0) {
 					punkt = this.sygnalWyswietlany.gett1();
-					while (ta <= this.sygnalWyswietlany.gett1() + this.sygnalWyswietlany.getd()) {
+					while (ta < this.sygnalWyswietlany.gett1() + this.sygnalWyswietlany.getd()) {
 						punkt = this.sygnalWyswietlany.wykres_punkty(punkt, ta);
 						this.sygnalWyswietlany.setPunktyY_wykres(punkt);
 						series.add(ta, punkt);
@@ -92,7 +92,7 @@ public class PanelRysunek_Wykres extends javax.swing.JPanel {
 								ta = ta + this.sygnalWyswietlany.getkroczek();
 							else
 								ta = ta + this.sygnalWyswietlany.getkroczek();
-						} else {
+						} else { // zapis sygnału ciągłego w postaci dyskretnego
 							if (/*this.sygnalWyswietlany.gettyp() != 9
 									&& */this.sygnalWyswietlany.gettyp() != 10
 									&& this.sygnalWyswietlany.gettyp() != 11)

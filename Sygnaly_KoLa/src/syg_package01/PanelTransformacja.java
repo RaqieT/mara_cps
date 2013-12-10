@@ -82,14 +82,23 @@ public class PanelTransformacja extends PanelObslugi {
 			this.labelsTryb = new String[] { "<wybierz tryb>", "część rzeczywista/urojona",
 					"moduł liczby zespolonej/argument w funkcji częstotliwości" };
 			this.labelsTransformacja = new String[] { "bez transformacji",
-					"dyskretna transformacja Fouriera", "transformacja Walsha-Hadamarda" };
+					"dyskretna transformacja Fouriera"
+					, "szybka transformacja Fouriera"
+					, "transformacja Walsha-Hadamarda"
+					, "szybka transformacja Walsha-Hadamarda" };
 			this.labelsOpis = new String[] {
 					style1_open + "" + style1_close,
 					style1_open
-							+ "<b>dyskretna transformacja Fouriera</b> – algorytm z definicji oraz szybka transformacja Fouriera z decymacją w dziedzinie częstotliwości (DIF FFT)"
+							+ "<b>dyskretna transformacja Fouriera</b> – algorytm z definicji"
 							+ style1_close,
 					style1_open
-							+ "<b>transformacja Walsha-Hadamarda</b><br>oraz szybka transformacja Walsha-Hadamarda"
+							+ "<b>szybka transformacja Fouriera</b><br>z decymacją w dziedzinie częstotliwości (DIF FFT)"
+							+ style1_close,
+					style1_open
+							+ "<b>transformacja Walsha-Hadamarda</b>"
+							+ style1_close,
+					style1_open
+							+ "<b>szybka transformacja Walsha-Hadamarda</b>"
 							+ style1_close };
 
 			ustawLayoutOgolny();
