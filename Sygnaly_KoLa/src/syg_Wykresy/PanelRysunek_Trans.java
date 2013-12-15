@@ -49,6 +49,7 @@ public class PanelRysunek_Trans extends javax.swing.JPanel {
 			XYSeriesCollection dataset_1 = null;
 			// XYSeriesCollection dataset_2 = null;
 			List<Complex> complexList = null;
+			long startTime = System.currentTimeMillis();//System.nanoTime();
 			if (this.przeksztalcenie == 1) { // dyskretna transformacja Fouriera
 												// F2
 				complexList = this.sygnal.DFT(this.sygnal.getPunktyY_probkowanie());
@@ -59,8 +60,11 @@ public class PanelRysunek_Trans extends javax.swing.JPanel {
 				complexList = this.sygnal.Hadamard();
 			} else if (this.przeksztalcenie == 4) { // szybka transformacja
 													// Walsha-Hadamarda
-				complexList = this.sygnal.HadamardSzybki();
+				complexList = this.sygnal.HadamardSzybkaT();
 			}
+			long endTime = System.currentTimeMillis();//System.nanoTime();
+			long duration = endTime - startTime;
+			System.out.println("Czas: " + duration);
 
 			if (complexList != null) {
 				if (complexList.size() > 0) {

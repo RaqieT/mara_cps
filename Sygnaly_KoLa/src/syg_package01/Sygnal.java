@@ -1478,7 +1478,7 @@ public class Sygnal {
 		return punktyWynikowe;
 	}
 
-	public List<Complex> HadamardSzybki() {
+	public List<Complex> HadamardSzybkaT() {
 		// pobranie właściwych punktów
 		if (this.punktyY_probkowanie == null
 				|| (this.punktyY_probkowanie != null && this.punktyY_probkowanie.size() <= 0)) {
